@@ -5,8 +5,10 @@ async function calculate() {
         // Gather outputs
         const outputs = [];
         document.querySelectorAll('.output-row').forEach(row => {
-            const item = row.querySelector('.item-select').value;
-            const rate = parseFloat(row.querySelector('.rate-input').value);
+            const itemEl = row.querySelector('.item-select');
+            const rateEl = row.querySelector('.rate-input');
+            const item = itemEl ? itemEl.value : '';
+            const rate = rateEl ? parseFloat(rateEl.value) : 0;
             if (item && rate > 0) {
                 outputs.push({ item, rate });
             }
@@ -17,30 +19,34 @@ async function calculate() {
             return;
         }
         
-        // Gather global tiers
+        // Gather global tiers and modifiers
         const globalTiers = {};
+        const globalModifiers = {};
         document.querySelectorAll('.tier-select').forEach(select => {
             const factory = select.dataset.factory;
             const tier = select.value;
             if (tier) {
                 globalTiers[factory] = tier;
             }
-        });
-        
-        // Gather global modifiers
-        const globalModifiers = {};
-        document.querySelectorAll('.tier-select').forEach(select => {
-            const factory = select.dataset.factory;
-            globalModifiers[factory] = {
-                speed: parseFloat(select.closest('.row').querySelector('.speed-input').value) || 0,
-                efficiency: parseFloat(select.closest('.row').querySelector('.efficiency-input').value) || 0,
-                energy: parseFloat(select.closest('.row').querySelector('.energy-input').value) || 1
-            };
+            // Get modifiers from the same row
+            const row = select.closest('.row');
+            if (row) {
+                const speedEl = row.querySelector('.speed-input');
+                const efficiencyEl = row.querySelector('.efficiency-input');
+                const energyEl = row.querySelector('.energy-input');
+                globalModifiers[factory] = {
+                    speed: speedEl ? (parseFloat(speedEl.value) || 0) : 0,
+                    efficiency: efficiencyEl ? (parseFloat(efficiencyEl.value) || 0) : 0,
+                    energy: energyEl ? (parseFloat(energyEl.value) || 1) : 1
+                };
+            }
         });
         
         // Gather research efficiency
-        const oreResearch = parseFloat(document.querySelector('.ore-research-input').value) || 0;
-        const olumiteResearch = parseFloat(document.querySelector('.olumite-research-input').value) || 0;
+        const oreResearchEl = document.querySelector('.ore-research-input');
+        const olumiteResearchEl = document.querySelector('.olumite-research-input');
+        const oreResearch = oreResearchEl ? (parseFloat(oreResearchEl.value) || 0) : 0;
+        const olumiteResearch = olumiteResearchEl ? (parseFloat(olumiteResearchEl.value) || 0) : 0;
         
         // Gather recipe overrides
         const recipeOverrides = {};
@@ -51,18 +57,19 @@ async function calculate() {
             const efficiencyEl = document.querySelector(`.override-efficiency[data-item="${item}"]`);
             const energyEl = document.querySelector(`.override-energy[data-item="${item}"]`);
             
-            const hasOverride = tier || 
-                (speedEl && speedEl.value !== '') || 
-                (efficiencyEl && efficiencyEl.value !== '') || 
-                (energyEl && energyEl.value !== '');
+            const speedVal = speedEl && speedEl.value !== '' ? parseFloat(speedEl.value) : null;
+            const efficiencyVal = efficiencyEl && efficiencyEl.value !== '' ? parseFloat(efficiencyEl.value) : null;
+            const energyVal = energyEl && energyEl.value !== '' ? parseFloat(energyEl.value) : null;
+            
+            const hasOverride = tier || speedVal !== null || efficiencyVal !== null || energyVal !== null;
             
             if (hasOverride) {
                 recipeOverrides[item] = {
                     tier: tier || null,
                     modifiers: {
-                        speed: speedEl && speedEl.value !== '' ? parseFloat(speedEl.value) : 0,
-                        efficiency: efficiencyEl && efficiencyEl.value !== '' ? parseFloat(efficiencyEl.value) : 0,
-                        energy: energyEl && energyEl.value !== '' ? parseFloat(energyEl.value) : 1
+                        speed: speedVal !== null ? speedVal : 0,
+                        efficiency: efficiencyVal !== null ? efficiencyVal : 0,
+                        energy: energyVal !== null ? energyVal : 1
                     }
                 };
             }
@@ -186,6 +193,9 @@ function displaySummary(results) {
 
 function formatNumber(value) {
     if (value === undefined || value === null) return '-';
-    if (value >= 1000) return Math.round(value).toLocaleString();
+    // Always use comma for thousands, period for decimals
+    if (value >= 1000) {
+        return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
     return value.toFixed(2);
 }

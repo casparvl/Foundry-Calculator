@@ -58,6 +58,16 @@ function populateGlobalSettings() {
                     ${tierOptions}
                 </select>
             </div>
+            <div class="col-md-8">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Speed</span>
+                    <input type="number" class="form-control speed-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
+                    <span class="input-group-text">Eff.</span>
+                    <input type="number" class="form-control efficiency-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
+                    <span class="input-group-text">Ene.</span>
+                    <input type="number" class="form-control energy-input" data-factory="${factoryName}" value="1" step="0.1">
+                </div>
+            </div>
         `;
         container.appendChild(row);
     }
