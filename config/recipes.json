@@ -42,5 +42,23 @@
     },
     "base_rate_per_min": 50,
     "resource_type": "olumite"
+  },
+  "Air": {
+    "factory_type": "Air Intake",
+    "inputs": {},
+    "outputs": {
+      "Air": 1
+    },
+    "base_rate_per_min": 1,
+    "resource_type": "infinite"
+  },
+  "Water": {
+    "factory_type": "Pump",
+    "inputs": {},
+    "outputs": {
+      "Water": 1
+    },
+    "base_rate_per_min": 1,
+    "resource_type": "infinite"
   }
 }
