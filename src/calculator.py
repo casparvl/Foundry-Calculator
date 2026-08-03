@@ -21,6 +21,11 @@ class ProductionChainSolver:
         self.factories = factories
         self.recipes = recipes
         self._calculation_cache: Dict[str, Any] = {}
+        # Build reverse lookup: output item → recipe name
+        self._output_to_recipe: Dict[str, str] = {}
+        for recipe_name, recipe_data in recipes.items():
+            for output_item in recipe_data.get("outputs", {}):
+                self._output_to_recipe[output_item] = recipe_name
     
     def calculate(self, request: CalculationRequest) -> Dict[str, Any]:
         """
@@ -53,7 +58,9 @@ class ProductionChainSolver:
             if item in processed_items:
                 continue
             
-            if item not in self.recipes:
+            # Check if item has a recipe (direct or via output lookup)
+            recipe_name = item if item in self.recipes else self._output_to_recipe.get(item)
+            if not recipe_name:
                 # This is a basic resource without a recipe
                 if item not in raw_resources:
                     raw_resources[item] = RawResourceInfo(
@@ -64,19 +71,19 @@ class ProductionChainSolver:
                 continue
             
             # Process this item's production
-            recipe = self.recipes[item]
+            recipe = self.recipes[recipe_name]
             factory_type = recipe["factory_type"]
             
             # Get tier (global or recipe override)
             global_tier = request.global_tiers.get(factory_type, "Tier 1")
             override_tier = None
-            if item in request.recipe_overrides:
-                override_tier = request.recipe_overrides[item].tier
+            if recipe_name in request.recipe_overrides:
+                override_tier = request.recipe_overrides[recipe_name].tier
             selected_tier = override_tier if override_tier else global_tier
             
             # Get modifiers (recipe override or global)
-            if item in request.recipe_overrides and request.recipe_overrides[item].modifiers:
-                factory_modifiers = request.recipe_overrides[item].modifiers
+            if recipe_name in request.recipe_overrides and request.recipe_overrides[recipe_name].modifiers:
+                factory_modifiers = request.recipe_overrides[recipe_name].modifiers
             else:
                 factory_modifiers = request.global_modifiers.get(factory_type, ModifierRequest())
             
@@ -94,24 +101,35 @@ class ProductionChainSolver:
             
             # Calculate inputs required
             inputs_required = {}
+            is_world_resource = "resource_type" in recipe
+            
             for input_item, input_amount in recipe["inputs"].items():
                 # Calculate input rate based on output ratio
                 output_amount = list(recipe["outputs"].values())[0]
                 input_rate = (items_needed[item] * input_amount / output_amount)
                 
-                # Apply efficiency modifier
-                efficiency = 1 + factory_modifiers.efficiency
-                input_rate /= efficiency
-                
-                inputs_required[input_item] = InputOutputInfo(
-                    rate=input_rate,
-                    source="recipe"
-                )
-                
-                # Add to items needed for next iteration
-                items_needed[input_item] = items_needed.get(input_item, 0) + input_rate
-                if input_item not in processed_items and input_item not in queue:
-                    queue.append(input_item)
+                if is_world_resource:
+                    # For world resources, don't apply factory efficiency yet
+                    # Will apply both factory + research efficiency for world_consumption
+                    inputs_required[input_item] = InputOutputInfo(
+                        rate=input_rate,
+                        source="world"
+                    )
+                    # Do NOT add to processing queue - consumed from world
+                else:
+                    # Apply factory efficiency modifier for regular recipes
+                    efficiency = 1 + factory_modifiers.efficiency
+                    input_rate /= efficiency
+                    
+                    inputs_required[input_item] = InputOutputInfo(
+                        rate=input_rate,
+                        source="recipe"
+                    )
+                    
+                    # Add to items needed for next iteration
+                    items_needed[input_item] = items_needed.get(input_item, 0) + input_rate
+                    if input_item not in processed_items and input_item not in queue:
+                        queue.append(input_item)
             
             # Calculate power (proportional to factory count)
             power_kw = factory_count * tier_info.power_kw * factory_modifiers.energy
@@ -132,24 +150,32 @@ class ProductionChainSolver:
             )
             production_chain.append(node)
             
-            # Check if this is a basic resource (mined from world)
-            if "resource_type" in recipe:
+            # Handle world resources (mined from environment or infinite)
+            if is_world_resource:
                 resource_type = recipe["resource_type"]
+                output_amount = list(recipe["outputs"].values())[0]
+                
                 if resource_type == "infinite":
-                    raw_resources[resource_type] = RawResourceInfo(
-                        total_per_min=items_needed[item],
-                        type=resource_type,
-                        world_consumption=items_needed[item]
-                    )
+                    # Infinite resources: no efficiency reduction
+                    for input_item, input_amount in recipe["inputs"].items():
+                        raw_input_rate = items_needed[item] * input_amount / output_amount
+                        raw_resources[input_item] = RawResourceInfo(
+                            total_per_min=raw_input_rate,
+                            type=resource_type,
+                            world_consumption=raw_input_rate
+                        )
                 else:
+                    # Ore/olumite resources: apply both factory + research efficiency
                     research_eff = request.research_efficiency.get(resource_type, 0.0)
-                    world_consumption = items_needed[item] / (1 + research_eff)
-                    
-                    raw_resources[resource_type] = RawResourceInfo(
-                        total_per_min=items_needed[item],
-                        type=resource_type,
-                        world_consumption=world_consumption
-                    )
+                    for input_item, input_amount in recipe["inputs"].items():
+                        raw_input_rate = items_needed[item] * input_amount / output_amount
+                        total_efficiency = 1 + factory_modifiers.efficiency + research_eff
+                        world_consumption = raw_input_rate / total_efficiency
+                        raw_resources[input_item] = RawResourceInfo(
+                            total_per_min=raw_input_rate,
+                            type=resource_type,
+                            world_consumption=world_consumption
+                        )
             
             processed_items.add(item)
         

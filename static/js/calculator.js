@@ -134,7 +134,11 @@ function displayTableView(results) {
         // Format inputs
         let inputsHtml = '';
         for (const [inputItem, info] of Object.entries(node.inputs_required)) {
-            inputsHtml += `${formatNumber(info.rate)} ${inputItem}<br>`;
+            if (info.source === "world") {
+                inputsHtml += `${formatNumber(info.rate)} ${inputItem}<br>`;
+            } else {
+                inputsHtml += `${formatNumber(info.rate)} ${inputItem}<br>`;
+            }
         }
         if (!inputsHtml) {
             inputsHtml = '<em>Basic resource</em>';

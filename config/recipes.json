@@ -1,51 +1,114 @@
 {
-  "ItemA": {
-    "factory_type": "Assembler",
+  "Xenoferrite Ore": {
+    "factory_type": "Crusher",
     "inputs": {
-      "ItemB": 5,
-      "ItemC": 10
+      "Xenoferrite Ore Rubble": 1
     },
     "outputs": {
-      "ItemA": 2
+      "Xenoferrite Ore": 1
     },
-    "base_rate_per_min": 10
+    "base_rate_per_min": 40
   },
-  "ItemB": {
-    "factory_type": "Assembler",
+  "Technum Ore": {
+    "factory_type": "Crusher",
     "inputs": {
-      "ItemC": 5,
-      "ItemD": 2
+      "Technum Ore Rubble": 1
     },
     "outputs": {
-      "ItemB": 5
+      "Technum Ore": 1
     },
-    "base_rate_per_min": 10
+    "base_rate_per_min": 40
   },
-  "ItemC": {
-    "factory_type": "Miner",
+  "Ignium Ore": {
+    "factory_type": "Crusher",
     "inputs": {
-      "ore_from_world": 1
+      "Ignium Ore Rubble": 1
     },
     "outputs": {
-      "ItemC": 1
+      "Ignium Ore": 1
     },
-    "base_rate_per_min": 100,
+    "base_rate_per_min": 40
+  },
+  "Telluxite Ore": {
+    "factory_type": "Crusher",
+    "inputs": {
+      "Telluxite Ore Rubble": 4
+    },
+    "outputs": {
+      "Telluxite Ore": 1
+    },
+    "base_rate_per_min": 40
+  },
+  "Gravel": {
+    "factory_type": "Crusher",
+    "inputs": {
+      "Mineral Rocks": 1
+    },
+    "outputs": {
+      "Gravel": 3
+    },
+    "base_rate_per_min": 30
+  },
+  "Xenoferrite Ore Rubble (Ore Vein Mining)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Xenoferrite Ore Rubble (from environment)": 1
+    },
+    "outputs": {
+      "Xenoferrite Ore Rubble": 1
+    },
+    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
-  "ItemD": {
-    "factory_type": "Miner",
+  "Technum Ore Rubble (Ore Vein Mining)": {
+    "factory_type": "Ore Vein Miner",
     "inputs": {
-      "olumite_from_world": 1
+      "Technum Ore Rubble (from environment)": 1
     },
     "outputs": {
-      "ItemD": 1
+      "Technum Ore Rubble": 1
     },
-    "base_rate_per_min": 50,
-    "resource_type": "olumite"
+    "base_rate_per_min": 160,
+    "resource_type": "ore"
+  },
+  "Ignium Ore Rubble (Ore Vein Mining)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Ignium Ore Rubble (from environment)": 1
+    },
+    "outputs": {
+      "Ignium Ore Rubble": 1
+    },
+    "base_rate_per_min": 160,
+    "resource_type": "ore"
+  },
+  "Telluxite Ore Rubble (Ore Vein Mining)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Telluxite Ore Rubble (from environment)": 1
+    },
+    "outputs": {
+      "Telluxite Ore Rubble": 1
+    },
+    "base_rate_per_min": 160,
+    "resource_type": "ore"
+  },
+  "Mineral Rocks (Ore Vein Mining)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Mineral Rocks (from environment)": 1
+    },
+    "outputs": {
+      "Mineral Rocks": 1
+    },
+    "base_rate_per_min": 160,
+    "resource_type": "ore"
   },
   "Air": {
     "factory_type": "Air Intake",
-    "inputs": {},
+    "inputs": {
+      "Air (from environment)": 1
+    },
     "outputs": {
       "Air": 1
     },
@@ -54,7 +117,9 @@
   },
   "Water": {
     "factory_type": "Pump",
-    "inputs": {},
+    "inputs": {
+      "Water (from environment)": 1
+    },
     "outputs": {
       "Water": 1
     },

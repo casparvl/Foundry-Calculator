@@ -203,5 +203,14 @@
         "power_kw": 8400
       }
     ]
+  },
+  "Ore Vein Miner": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 500
+      }
+    ]
   }
 }
