@@ -127,6 +127,7 @@ function displayTableView(results) {
     html += '<th>Tier</th>';
     html += '<th>Count</th>';
     html += '<th>Inputs Required (/min)</th>';
+    html += '<th>Outputs (/min)</th>';
     html += '<th>Power (kW)</th>';
     html += '</tr></thead><tbody>';
     
@@ -144,12 +145,19 @@ function displayTableView(results) {
             inputsHtml = '<em>Basic resource</em>';
         }
         
+        // Format outputs
+        let outputsHtml = '';
+        for (const [outputItem, rate] of Object.entries(node.outputs_produced)) {
+            outputsHtml += `${formatNumber(rate)} ${outputItem}<br>`;
+        }
+        
         html += '<tr>';
         html += `<td><strong>${node.item}</strong></td>`;
         html += `<td>${node.factories.type}</td>`;
         html += `<td>${node.factories.tier}</td>`;
         html += `<td>${formatNumber(node.factories.count)}</td>`;
         html += `<td>${inputsHtml}</td>`;
+        html += `<td>${outputsHtml}</td>`;
         html += `<td>${formatNumber(node.power_kw)}</td>`;
         html += '</tr>';
     }
