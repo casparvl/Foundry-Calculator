@@ -33,3 +33,7 @@ These are all the inputs. The calculator should then tell us the following:
 - In total I need (2/5)*(100/1.2)/1.2x item D / min and ((100/1.2)/1.2x + (100/1.2)) Item C / min in terms of raw resources.
 
 Essentially, in the backend, this should create a graph-like structure. The nodes being a (set of) factories with a particular recipy configured, and the arrows being the amount of input / output material going into and out of that node. In the GUI, I'd like to have multiple views. One showing the graph as nodes and arrows. The other showing just the total item/min counts for each item involved in the production chain, as well as total number of factories with a given recipy.
+
+In terms of implementation: please implement this as a web page that I can serve locally. You can pick any web framework or langauge that you consider the most suitable for a project like this. Create an INSTALLTION.md file containing installation instructions, including a clear list of dependencies. Please make sure this can be hosted on a linux machine, and that tools needed to serve this page can be installed without having root access (i.e. with an unprivelidged user). Then, provide instructions on how to locally start the web server and access the required page.
+
+Make sure that you create an API to bypass the user interface, and use this API to create unit tests for a few simple cases. This will allow me to check those simple cases for correctness at the end of the project, so that I know your implementation is correct.
