@@ -4,21 +4,203 @@
       {
         "name": "Tier 1",
         "speed_multiplier": 1.0,
-        "power_kw": 550
+        "power_kw": 50
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 1.0,
+        "power_kw": 125
+      },
+      {
+        "name": "Tier 3",
+        "speed_multiplier": 1.0,
+        "power_kw": 250
+      }
+    ]
+  },
+  "Fluid-assembler": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 300
+      }
+    ]
+  },
+  "Barrel Filler": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 100
+      }
+    ]
+  },
+  "Smelter": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 100
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 1.5,
+        "power_kw": 150
+      }
+    ]
+  },
+  "Electric Arc Furnace": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 4000
+      }
+    ]
+  },
+  "Lava smelter": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 0
       },
       {
         "name": "Tier 2",
         "speed_multiplier": 2.0,
-        "power_kw": 1100
+        "power_kw": 0
       }
     ]
   },
-  "Miner": {
+  "Crusher": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 75
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 2.0,
+        "power_kw": 200
+      }
+    ]
+  },
+  "Distillation Column": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 1000
+      }
+    ]
+  },
+  "Chemical Processor": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 300
+      }
+    ]
+  },
+  "Casting Machine": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 100
+      }
+    ]
+  },
+  "Crystal Refiner": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 500
+      }
+    ]
+  },
+  "Incinerator": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 1000
+      }
+    ]
+  },
+  "Flare Stack": {
     "tiers": [
       {
         "name": "Tier 1",
         "speed_multiplier": 1.0,
         "power_kw": 200
+      }
+    ]
+  },
+  "Greenhouse": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 100
+      }
+    ]
+  },
+  "Resource Separator": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 250
+      }
+    ]
+  },
+  "Scrap Recycler": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 250
+      }
+    ]
+  },
+  "Blast Furnace": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 0
+      }
+    ]
+  },
+  "Heavy Caster": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 2000
+      }
+    ]
+  },
+  "Hot Air Stove": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 5000
+      }
+    ]
+  },
+  "Air Intake": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 8400
       }
     ]
   }
