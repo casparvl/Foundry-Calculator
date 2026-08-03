@@ -1,0 +1,25 @@
+{
+  "Assembler": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 550
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 2.0,
+        "power_kw": 1100
+      }
+    ]
+  },
+  "Miner": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 200
+      }
+    ]
+  }
+}

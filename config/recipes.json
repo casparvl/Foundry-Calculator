@@ -1,0 +1,46 @@
+{
+  "ItemA": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "ItemB": 5,
+      "ItemC": 10
+    },
+    "outputs": {
+      "ItemA": 2
+    },
+    "base_rate_per_min": 10
+  },
+  "ItemB": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "ItemC": 5,
+      "ItemD": 2
+    },
+    "outputs": {
+      "ItemB": 5
+    },
+    "base_rate_per_min": 10
+  },
+  "ItemC": {
+    "factory_type": "Miner",
+    "inputs": {
+      "ore_from_world": 1
+    },
+    "outputs": {
+      "ItemC": 1
+    },
+    "base_rate_per_min": 100,
+    "resource_type": "ore"
+  },
+  "ItemD": {
+    "factory_type": "Miner",
+    "inputs": {
+      "olumite_from_world": 1
+    },
+    "outputs": {
+      "ItemD": 1
+    },
+    "base_rate_per_min": 50,
+    "resource_type": "olumite"
+  }
+}
