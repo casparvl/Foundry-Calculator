@@ -57,7 +57,7 @@ Defines recipes. Each recipe has:
 - `inputs`: Dictionary of input items and amounts per cycle
 - `outputs`: Dictionary of output items and amounts per cycle
 - `base_rate_per_min`: Base production rate (cycles per minute)
-- `resource_type` (optional): "ore" or "olumite" for basic resources mined from the world
+- `resource_type` (optional): "ore", "olumite", or "infinite" for basic resources mined from the world
 
 ## Running Tests
 

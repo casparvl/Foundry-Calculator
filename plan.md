@@ -61,7 +61,7 @@ Build a web-based resource calculator for the Foundry automation game that calcu
     "inputs": {"ItemA": 5, "ItemB": 10},
     "outputs": {"ItemName": 2},
     "base_rate_per_min": 10,
-    "resource_type": "ore" // Optional: "ore" or "olumite" for basic resources
+    "resource_type": "ore" // Optional: "ore", "olumite", or "infinite" for basic resources
   }
 }
 ```

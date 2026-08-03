@@ -135,14 +135,21 @@ class ProductionChainSolver:
             # Check if this is a basic resource (mined from world)
             if "resource_type" in recipe:
                 resource_type = recipe["resource_type"]
-                research_eff = request.research_efficiency.get(resource_type, 0.0)
-                world_consumption = items_needed[item] / (1 + research_eff)
-                
-                raw_resources[resource_type] = RawResourceInfo(
-                    total_per_min=items_needed[item],
-                    type=resource_type,
-                    world_consumption=world_consumption
-                )
+                if resource_type == "infinite":
+                    raw_resources[resource_type] = RawResourceInfo(
+                        total_per_min=items_needed[item],
+                        type=resource_type,
+                        world_consumption=items_needed[item]
+                    )
+                else:
+                    research_eff = request.research_efficiency.get(resource_type, 0.0)
+                    world_consumption = items_needed[item] / (1 + research_eff)
+                    
+                    raw_resources[resource_type] = RawResourceInfo(
+                        total_per_min=items_needed[item],
+                        type=resource_type,
+                        world_consumption=world_consumption
+                    )
             
             processed_items.add(item)
         
