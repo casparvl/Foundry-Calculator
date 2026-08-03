@@ -122,7 +122,7 @@ function displayTableView(results) {
     
     let html = '<div class="table-responsive"><table class="table table-bordered table-hover">';
     html += '<thead class="table-light"><tr>';
-    html += '<th>Item</th>';
+    html += '<th>Recipe</th>';
     html += '<th>Factory</th>';
     html += '<th>Tier</th>';
     html += '<th>Count</th>';
@@ -152,7 +152,7 @@ function displayTableView(results) {
         }
         
         html += '<tr>';
-        html += `<td><strong>${node.item}</strong></td>`;
+        html += `<td><strong>${node.recipe_name}</strong></td>`;
         html += `<td>${node.factories.type}</td>`;
         html += `<td>${node.factories.tier}</td>`;
         html += `<td>${formatNumber(node.factories.count)}</td>`;

@@ -65,6 +65,7 @@ class InputOutputInfo(BaseModel):
 
 class ProductionNode(BaseModel):
     """A node in the production chain."""
+    recipe_name: str
     item: str
     requested_rate: float
     factories: FactoryInfo

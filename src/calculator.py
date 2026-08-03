@@ -135,8 +135,13 @@ class ProductionChainSolver:
             power_kw = factory_count * tier_info.power_kw * factory_modifiers.energy
             total_power += power_kw
             
+            # Get actual output item name from recipe
+            output_item = list(recipe["outputs"].keys())[0]
+            output_rate = items_needed[item]
+            
             # Create production node
             node = ProductionNode(
+                recipe_name=recipe_name,
                 item=item,
                 requested_rate=items_needed[item],
                 factories=FactoryInfo(
@@ -145,7 +150,7 @@ class ProductionChainSolver:
                     count=factory_count
                 ),
                 inputs_required=inputs_required,
-                outputs_produced={"item": items_needed[item]},
+                outputs_produced={output_item: output_rate},
                 power_kw=power_kw
             )
             production_chain.append(node)
