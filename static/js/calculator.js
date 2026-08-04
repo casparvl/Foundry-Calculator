@@ -115,6 +115,12 @@ async function calculate() {
 function displayResults(result) {
     displayTableView(result.results);
     displaySummary(result.results);
+    // Try to render graph, but don't fail if vis isn't available yet
+    try {
+        renderGraph();
+    } catch (error) {
+        console.warn('Graph rendering failed:', error.message);
+    }
 }
 
 function displayTableView(results) {

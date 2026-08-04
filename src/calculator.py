@@ -188,6 +188,7 @@ class ProductionChainSolver:
         result = {
             "production_chain": [node.dict() for node in production_chain],
             "raw_resources": {k: v.dict() for k, v in raw_resources.items()},
+            "requested_outputs": [{"item": o["item"], "rate": o["rate"]} for o in request.outputs],
             "total_power_kw": total_power
         }
         

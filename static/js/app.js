@@ -6,28 +6,56 @@ let calculationResult = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', async function() {
+    // Add output row immediately (before config loads)
+    addOutputRow();
+    
+    // Load config in background
     await loadConfiguration();
-    addOutputRow(); // Add first output row by default
 });
 
-// Load factory and recipe configurations from API
+// Load factory and recipe configurations from API (single attempt)
 async function loadConfiguration() {
+    const outputsContainer = document.getElementById('outputs-container');
+    if (outputsContainer) {
+        outputsContainer.innerHTML = '';
+    }
+    
     try {
         const [factoriesResponse, recipesResponse] = await Promise.all([
             fetch('/api/factories'),
             fetch('/api/recipes')
         ]);
         
+        if (!factoriesResponse.ok || !recipesResponse.ok) {
+            throw new Error('API not ready');
+        }
+        
         factoryData = await factoriesResponse.json();
         recipeData = await recipesResponse.json();
         
-        // Populate global settings
+        // Hide error messages on success
+        const msg = document.getElementById('config-error-message');
+        if (msg) {
+            msg.classList.add('d-none');
+        }
+        
+        // Populate settings and add output row
         populateGlobalSettings();
         populateRecipeOverrides();
+        addOutputRow(); // Add first output row after config loads
+        
     } catch (error) {
-        console.error('Error loading configuration:', error);
-        alert('Failed to load configuration. Please check if the server is running.');
+        console.error('Failed to load configuration:', error);
+        const msg = document.getElementById('config-error-message');
+        if (msg) {
+            msg.classList.remove('d-none');
+        }
     }
+}
+
+// Retry configuration loading (manual trigger)
+async function retryConfiguration() {
+    await loadConfiguration();
 }
 
 // Populate global settings dropdowns and inputs
@@ -120,7 +148,7 @@ function populateGlobalSettings() {
     container.appendChild(researchRow);
 }
 
-// Populate recipe override dropdowns
+// Populate recipe override dropdowns (defensive: skip recipes with missing factory)
 function populateRecipeOverrides() {
     const container = document.getElementById('recipe-overrides-container');
     container.innerHTML = '';
@@ -133,6 +161,12 @@ function populateRecipeOverrides() {
     for (const itemName of Object.keys(recipeData)) {
         const recipe = recipeData[itemName];
         const factory = factoryData[recipe.factory_type];
+        
+        // Skip recipes whose factory isn't defined (graceful degradation)
+        if (!factory) {
+            console.warn(`Skipping recipe "${itemName}" - factory "${recipe.factory_type}" not defined in factories.json`);
+            continue;
+        }
         
         const row = document.createElement('div');
         row.className = 'row mb-3';
@@ -176,6 +210,8 @@ function populateRecipeOverrides() {
 // Add a new output row
 function addOutputRow() {
     const container = document.getElementById('outputs-container');
+    if (!container) return;
+    
     const row = document.createElement('div');
     row.className = 'row output-row align-items-end';
     
