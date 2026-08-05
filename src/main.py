@@ -21,8 +21,11 @@ with open("config/factories.json", "r") as f:
 with open("config/recipes.json", "r") as f:
     RECIPES = json.load(f)
 
+with open("config/robots.json", "r") as f:
+    ROBOTS = json.load(f)
+
 # Initialize solver
-solver = ProductionChainSolver(FACTORIES, RECIPES)
+solver = ProductionChainSolver(FACTORIES, RECIPES, ROBOTS)
 
 # Mount static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -45,6 +48,33 @@ async def get_factories():
 async def get_recipes():
     """Return all recipe definitions."""
     return RECIPES
+
+
+@app.get("/api/robots")
+async def get_robots():
+    """Return workstation levels, robot definitions, and per-factory robot options."""
+    robots_by_name = ROBOTS.get("robots", {})
+    aliases = ROBOTS.get("machine_aliases", {})
+    
+    # Map each factory type to its robots and default selection
+    factories = {}
+    for factory_name in FACTORIES:
+        robots = []
+        for robot_name, robot in robots_by_name.items():
+            affected = robot.get("affected_machines", [])
+            if any(factory_name in aliases.get(group, []) for group in affected):
+                robots.append(robot_name)
+        robots.sort()
+        factories[factory_name] = {
+            "robots": robots,
+            "default": solver._default_robot(factory_name)
+        }
+    
+    return {
+        "workstation_levels": ROBOTS.get("workstation_levels", {}),
+        "robots": robots_by_name,
+        "factories": factories
+    }
 
 
 @app.post("/api/calculate")

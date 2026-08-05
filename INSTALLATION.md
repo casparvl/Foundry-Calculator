@@ -54,10 +54,21 @@ Defines factory types and their tiers. Each tier has:
 
 Defines recipes. Each recipe has:
 - `factory_type`: Type of factory that produces this item
-- `inputs`: Dictionary of input items and amounts per cycle
-- `outputs`: Dictionary of output items and amounts per cycle
-- `base_rate_per_min`: Base production rate (cycles per minute)
+- `inputs`: Dictionary of input items and their per-minute consumption rates
+- `outputs`: Dictionary of output items and their per-minute production rates. The primary (first) output's amount is the factory's throughput used to derive factory counts; other amounts are scaled relative to it
 - `resource_type` (optional): "ore", "olumite", or "infinite" for basic resources mined from the world
+
+### `config/robots.json`
+
+Defines robot workstation settings:
+- `workstation_levels`: Map of workstation level to its effective multiplier (1 → 1.0, 2 → 2.0, 3 → 4.0). The multiplier scales both the robot's buff percentage and its power increase.
+- `machine_aliases`: Map of in-game machine groups (e.g. "Miner", "Chemical Building") to the factory types defined in `factories.json`. Robots reference machine groups through their `affected_machines`.
+- `robots`: Each robot has:
+  - `robot_type`: Robot family (Aquatic, Bot, Drone, Robot)
+  - `affected_machines`: List of machine groups it boosts (must exist in `machine_aliases`)
+  - `buff_type`: "speed" (raises effective production rate) or "efficiency" (reduces input consumption)
+  - `buff_percentage`: Buff as a decimal (e.g. 0.25 for +25%)
+  - `power_increase_percentage`: Additional power draw as a decimal (e.g. 0.15 for +15%)
 
 ## Running Tests
 
@@ -94,12 +105,13 @@ pytest -v
 
 **Global Settings:**
 - Select factory tiers for each factory type
-- Set global speed, efficiency, and energy modifiers per factory type
+- Select a robot workstation level (I, II, or III) — a higher level multiplies both the robot buff and its power increase
+- Pick a robot for each factory type (options are filtered to robots that affect that factory; "None" disables buffs). Defaults are the highest-efficiency robots per factory
 - Set research efficiency for ore and olumite
 
 **Recipe Overrides:**
 - Override tier selection for individual recipes
-- Override modifiers for specific recipes
+- Override the robot for specific recipes (or explicitly set "None" to disable the global robot for that recipe)
 
 ## Dependencies
 
@@ -116,5 +128,5 @@ pytest -v
 
 - All calculations are fractional (no rounding)
 - Power consumption is proportional to actual factory utilization
-- Modifiers (speed, efficiency, energy) are applied independently
+- Robot buffs (speed/efficiency) and power increases are scaled by the workstation level multiplier
 - Basic resources (ores, olumite) have research efficiency applied to world consumption

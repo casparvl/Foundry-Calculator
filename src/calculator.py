@@ -3,7 +3,7 @@ Core calculation engine for the Foundry Calculator.
 """
 from typing import Dict, List, Any, Optional
 from src.models import (
-    Factory, FactoryTier, ModifierRequest, CalculationRequest,
+    Factory, FactoryTier, CalculationRequest,
     ProductionNode, FactoryInfo, InputOutputInfo, RawResourceInfo
 )
 import math
@@ -17,9 +17,11 @@ class ProductionChainSolver:
     Modifiers are applied independently.
     """
     
-    def __init__(self, factories: Dict[str, Any], recipes: Dict[str, Any]):
+    def __init__(self, factories: Dict[str, Any], recipes: Dict[str, Any],
+                 robots: Optional[Dict[str, Any]] = None):
         self.factories = factories
         self.recipes = recipes
+        self.robots = robots if robots is not None else {}
         self._calculation_cache: Dict[str, Any] = {}
         # Build reverse lookup: output item → recipe name
         self._output_to_recipe: Dict[str, str] = {}
@@ -75,25 +77,28 @@ class ProductionChainSolver:
             factory_type = recipe["factory_type"]
             
             # Get tier (global or recipe override)
-            global_tier = request.global_tiers.get(factory_type, "Tier 1")
+            global_tier = request.global_tiers.get(factory_type)
+            if not global_tier:
+                tiers = self.factories.get(factory_type, {}).get("tiers", [])
+                global_tier = tiers[-1]["name"] if tiers else "Tier 1"
             override_tier = None
             if recipe_name in request.recipe_overrides:
                 override_tier = request.recipe_overrides[recipe_name].tier
             selected_tier = override_tier if override_tier else global_tier
             
-            # Get modifiers (recipe override or global)
-            if recipe_name in request.recipe_overrides and request.recipe_overrides[recipe_name].modifiers:
-                factory_modifiers = request.recipe_overrides[recipe_name].modifiers
-            else:
-                factory_modifiers = request.global_modifiers.get(factory_type, ModifierRequest())
+            # Get robot (recipe override, global selection, or default)
+            robot_name = self._robot_for(request, factory_type, recipe_name)
+            speed_modifier, efficiency_modifier, power_multiplier = self._robot_effects(
+                robot_name, request.workstation_level
+            )
             
-            # Calculate effective rate
+            # Calculate effective rate (primary output amount = throughput per factory)
+            primary_output_amount = list(recipe["outputs"].values())[0]
             tier_info = self._get_tier_info(factory_type, selected_tier)
-            speed_modifier = 1 + factory_modifiers.speed
             effective_rate = (
-                recipe["base_rate_per_min"] 
+                primary_output_amount 
                 * tier_info.speed_multiplier 
-                * speed_modifier
+                * (1 + speed_modifier)
             )
             
             # Calculate factory count
@@ -117,8 +122,8 @@ class ProductionChainSolver:
                     )
                     # Do NOT add to processing queue - consumed from world
                 else:
-                    # Apply factory efficiency modifier for regular recipes
-                    efficiency = 1 + factory_modifiers.efficiency
+                    # Apply efficiency modifier for regular recipes
+                    efficiency = 1 + efficiency_modifier
                     input_rate /= efficiency
                     
                     inputs_required[input_item] = InputOutputInfo(
@@ -132,7 +137,7 @@ class ProductionChainSolver:
                         queue.append(input_item)
             
             # Calculate power (proportional to factory count)
-            power_kw = factory_count * tier_info.power_kw * factory_modifiers.energy
+            power_kw = factory_count * tier_info.power_kw * power_multiplier
             total_power += power_kw
             
             # Get actual output item name from recipe
@@ -170,11 +175,11 @@ class ProductionChainSolver:
                             world_consumption=raw_input_rate
                         )
                 else:
-                    # Ore/olumite resources: apply both factory + research efficiency
+                    # Ore/olumite resources: apply both robot + research efficiency
                     research_eff = request.research_efficiency.get(resource_type, 0.0)
                     for input_item, input_amount in recipe["inputs"].items():
                         raw_input_rate = items_needed[item] * input_amount / output_amount
-                        total_efficiency = 1 + factory_modifiers.efficiency + research_eff
+                        total_efficiency = 1 + efficiency_modifier + research_eff
                         world_consumption = raw_input_rate / total_efficiency
                         raw_resources[input_item] = RawResourceInfo(
                             total_per_min=raw_input_rate,
@@ -205,6 +210,68 @@ class ProductionChainSolver:
                 return FactoryTier(**tier)
         
         raise ValueError(f"Tier '{tier_name}' not found for factory '{factory_type}'")
+    
+    def _robot_for(self, request: CalculationRequest, factory_type: str,
+                   recipe_name: str) -> Optional[str]:
+        """Resolve the robot name for a factory, checking recipe overrides
+        first, then global selections. Absent/explicit-null means no robot."""
+        if recipe_name in request.recipe_overrides:
+            return request.recipe_overrides[recipe_name].robot
+        return request.global_robots.get(factory_type)
+    
+    def _default_robot(self, factory_type: str) -> Optional[str]:
+        """Pick the default robot for a factory: highest efficiency, tiebreak speed."""
+        candidates = [
+            name for name in self.robots.get("robots", {})
+            if self._robot_affects(name, factory_type)
+        ]
+        if not candidates:
+            return None
+        
+        def score(name):
+            robot = self.robots["robots"][name]
+            buff = robot.get("buff_percentage", 0.0)
+            efficiency = buff if robot.get("buff_type") == "efficiency" else -1.0
+            speed = buff if robot.get("buff_type") == "speed" else -1.0
+            return (efficiency, speed)
+        
+        return max(candidates, key=score)
+    
+    def _robot_affects(self, robot_name: str, factory_type: str) -> bool:
+        """Check whether a robot's affected machine groups include the factory type."""
+        if not self.robots:
+            return False
+        robot = self.robots.get("robots", {}).get(robot_name)
+        if not robot:
+            return False
+        aliases = self.robots.get("machine_aliases", {})
+        for group in robot.get("affected_machines", []):
+            if factory_type in aliases.get(group, []):
+                return True
+        return False
+    
+    def _robot_effects(self, robot_name: Optional[str],
+                       workstation_level: int) -> tuple[float, float, float]:
+        """Return (speed_modifier, efficiency_modifier, power_multiplier) for a robot."""
+        speed_modifier = 0.0
+        efficiency_modifier = 0.0
+        power_multiplier = 1.0
+        if not robot_name or not self.robots:
+            return speed_modifier, efficiency_modifier, power_multiplier
+        robot = self.robots.get("robots", {}).get(robot_name)
+        if not robot:
+            return speed_modifier, efficiency_modifier, power_multiplier
+        
+        levels = self.robots.get("workstation_levels", {})
+        multiplier = levels.get(str(workstation_level), 4.0)
+        
+        buff = robot.get("buff_percentage", 0.0) * multiplier
+        if robot.get("buff_type") == "speed":
+            speed_modifier = buff
+        else:
+            efficiency_modifier = buff
+        power_multiplier = 1 + robot.get("power_increase_percentage", 0.0) * multiplier
+        return speed_modifier, efficiency_modifier, power_multiplier
     
     def cache_calculation(self, calc_id: str, result: Dict[str, Any]):
         """Cache a calculation result."""

@@ -1,0 +1,213 @@
+{
+  "workstation_levels": {
+    "1": 1.0,
+    "2": 2.0,
+    "3": 4.0
+  },
+  "machine_aliases": {
+    "Chemical Building": ["Chemical Processor"],
+    "Pumpjack": ["Pumpjack"],
+    "Greenhouse": ["Greenhouse"],
+    "Crystal Refiner": ["Crystal Refiner"],
+    "Casting Machine": ["Casting Machine"],
+    "Crusher": ["Crusher"],
+    "Smelter": ["Smelter"],
+    "Miner": ["Ore Vein Miner", "Drone Miner"],
+    "Assembler": ["Assembler", "Fluid-assembler"],
+    "Incinerator": ["Incinerator"],
+    "Flare Stack": ["Flare Stack"],
+    "Research": [],
+    "Research Servers": []
+  },
+  "robots": {
+    "Aquatic Hauling Bot": {
+      "robot_type": "Aquatic",
+      "affected_machines": ["Chemical Building"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.04,
+      "power_increase_percentage": 0.20
+    },
+    "Hydro-Farming Bot": {
+      "robot_type": "Aquatic",
+      "affected_machines": ["Pumpjack", "Greenhouse", "Crystal Refiner"],
+      "buff_type": "speed",
+      "buff_percentage": 0.15,
+      "power_increase_percentage": 0.05
+    },
+    "Hydro-Mining Bot": {
+      "robot_type": "Aquatic",
+      "affected_machines": ["Pumpjack"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.15,
+      "power_increase_percentage": 0.40
+    },
+    "Marine Exploration Bot": {
+      "robot_type": "Aquatic",
+      "affected_machines": ["Research"],
+      "buff_type": "speed",
+      "buff_percentage": 0.15,
+      "power_increase_percentage": 0.05
+    },
+    "Cleaning Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Casting Machine"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.02,
+      "power_increase_percentage": 0.15
+    },
+    "Heavy Duty Transport Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Crusher", "Smelter"],
+      "buff_type": "speed",
+      "buff_percentage": 0.05,
+      "power_increase_percentage": 0.02
+    },
+    "Light Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Miner"],
+      "buff_type": "speed",
+      "buff_percentage": 0.30,
+      "power_increase_percentage": 0.20
+    },
+    "Operator Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Miner", "Smelter", "Assembler", "Pumpjack"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.03,
+      "power_increase_percentage": 0.20
+    },
+    "Screen Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Casting Machine"],
+      "buff_type": "speed",
+      "buff_percentage": 0.30,
+      "power_increase_percentage": 0.20
+    },
+    "Snack Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Chemical Building", "Incinerator", "Flare Stack"],
+      "buff_type": "speed",
+      "buff_percentage": 0.30,
+      "power_increase_percentage": 0.20
+    },
+    "Transport Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Assembler", "Miner"],
+      "buff_type": "speed",
+      "buff_percentage": 0.05,
+      "power_increase_percentage": 0.01
+    },
+    "Vacuum Bot": {
+      "robot_type": "Bot",
+      "affected_machines": ["Smelter"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.02,
+      "power_increase_percentage": 0.15
+    },
+    "Combat Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Crusher"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.025,
+      "power_increase_percentage": 0.20
+    },
+    "Maintenance Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Assembler", "Casting Machine", "Chemical Building"],
+      "buff_type": "speed",
+      "buff_percentage": 0.075,
+      "power_increase_percentage": 0.0
+    },
+    "Mining Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Miner", "Crusher", "Smelter"],
+      "buff_type": "speed",
+      "buff_percentage": 0.125,
+      "power_increase_percentage": 0.05
+    },
+    "Planter Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Pumpjack", "Greenhouse", "Crystal Refiner"],
+      "buff_type": "speed",
+      "buff_percentage": 0.125,
+      "power_increase_percentage": 0.05
+    },
+    "Science Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Research"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.015,
+      "power_increase_percentage": 0.15
+    },
+    "Transport Drone": {
+      "robot_type": "Drone",
+      "affected_machines": ["Casting Machine"],
+      "buff_type": "speed",
+      "buff_percentage": 0.15,
+      "power_increase_percentage": 0.05
+    },
+    "Assault Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Casting Machine"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.05,
+      "power_increase_percentage": 0.30
+    },
+    "Combat Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Crusher"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.05,
+      "power_increase_percentage": 0.40
+    },
+    "Farmer Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Pumpjack", "Greenhouse", "Crystal Refiner"],
+      "buff_type": "speed",
+      "buff_percentage": 0.25,
+      "power_increase_percentage": 0.15
+    },
+    "Hazard Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Chemical Building"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.06,
+      "power_increase_percentage": 0.30
+    },
+    "Miner Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Miner", "Crusher", "Smelter"],
+      "buff_type": "speed",
+      "buff_percentage": 0.25,
+      "power_increase_percentage": 0.15
+    },
+    "Operator Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Miner", "Smelter", "Assembler", "Pumpjack"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.06,
+      "power_increase_percentage": 0.40
+    },
+    "Personal Assistant Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Assembler", "Casting Machine", "Chemical Building", "Incinerator", "Flare Stack"],
+      "buff_type": "speed",
+      "buff_percentage": 0.25,
+      "power_increase_percentage": 0.15
+    },
+    "Science Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Research Servers"],
+      "buff_type": "efficiency",
+      "buff_percentage": 0.03,
+      "power_increase_percentage": 0.30
+    },
+    "Scout Robot": {
+      "robot_type": "Robot",
+      "affected_machines": ["Research Servers"],
+      "buff_type": "speed",
+      "buff_percentage": 0.30,
+      "power_increase_percentage": 0.15
+    }
+  }
+}

@@ -20,6 +20,12 @@ def load_recipes():
         return json.load(f)
 
 
+def load_robots():
+    """Load robots.json."""
+    with open(CONFIG_DIR / "robots.json", "r") as f:
+        return json.load(f)
+
+
 class TestFactoryConsistency:
     """Test that all factories referenced in recipes are defined."""
     
@@ -69,6 +75,37 @@ class TestRecipeConsistency:
                 assert input_item in produced_items or input_item in recipes, (
                     f"Recipe '{recipe_name}' requires input '{input_item}' "
                     f"which is not produced by any recipe and is not a world resource"
+                )
+
+
+class TestRobotConsistency:
+    """Test robots.json consistency with factories.json."""
+    
+    def test_all_robot_machines_exist(self):
+        """Test that every machine alias target exists in factories.json."""
+        factories = load_factories()
+        robots = load_robots()
+        
+        defined_factories = set(factories.keys())
+        aliases = robots.get("machine_aliases", {})
+        
+        for group, factory_list in aliases.items():
+            for factory in factory_list:
+                assert factory in defined_factories, (
+                    f"Robot machine group '{group}' references factory '{factory}' "
+                    f"which is not defined in factories.json"
+                )
+    
+    def test_robot_affected_machines_are_alias_groups(self):
+        """Test that every robot's affected machines are defined alias groups."""
+        robots = load_robots()
+        
+        aliases = set(robots.get("machine_aliases", {}).keys())
+        for robot_name, robot in robots.get("robots", {}).items():
+            for group in robot.get("affected_machines", []):
+                assert group in aliases, (
+                    f"Robot '{robot_name}' affects machine group '{group}' "
+                    f"which has no entry in machine_aliases"
                 )
 
 

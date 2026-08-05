@@ -2,128 +2,588 @@
   "Xenoferrite Ore": {
     "factory_type": "Crusher",
     "inputs": {
-      "Xenoferrite Ore Rubble": 1
+      "Xenoferrite Ore Rubble": 40
     },
     "outputs": {
-      "Xenoferrite Ore": 1
-    },
-    "base_rate_per_min": 40
+      "Xenoferrite Ore": 40
+    }
   },
   "Technum Ore": {
     "factory_type": "Crusher",
     "inputs": {
-      "Technum Ore Rubble": 1
+      "Technum Ore Rubble": 40
     },
     "outputs": {
-      "Technum Ore": 1
-    },
-    "base_rate_per_min": 40
+      "Technum Ore": 40
+    }
   },
   "Ignium Ore": {
     "factory_type": "Crusher",
     "inputs": {
-      "Ignium Ore Rubble": 1
+      "Ignium Ore Rubble": 40
     },
     "outputs": {
-      "Ignium Ore": 1
-    },
-    "base_rate_per_min": 40
+      "Ignium Ore": 40
+    }
   },
   "Telluxite Ore": {
     "factory_type": "Crusher",
     "inputs": {
-      "Telluxite Ore Rubble": 4
+      "Telluxite Ore Rubble": 160
     },
     "outputs": {
-      "Telluxite Ore": 1
-    },
-    "base_rate_per_min": 40
+      "Telluxite Ore": 40
+    }
   },
   "Gravel": {
     "factory_type": "Crusher",
     "inputs": {
-      "Mineral Rocks": 1
+      "Mineral Rocks": 10
     },
     "outputs": {
-      "Gravel": 3
-    },
-    "base_rate_per_min": 30
+      "Gravel": 30
+    }
   },
   "Xenoferrite Ore Rubble (Ore Vein Mining)": {
     "factory_type": "Ore Vein Miner",
     "inputs": {
-      "Xenoferrite Ore Rubble (from environment)": 1
+      "Xenoferrite Ore Rubble (from environment)": 160
     },
     "outputs": {
-      "Xenoferrite Ore Rubble": 1
+      "Xenoferrite Ore Rubble": 160
     },
-    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
   "Technum Ore Rubble (Ore Vein Mining)": {
     "factory_type": "Ore Vein Miner",
     "inputs": {
-      "Technum Ore Rubble (from environment)": 1
+      "Technum Ore Rubble (from environment)": 160
     },
     "outputs": {
-      "Technum Ore Rubble": 1
+      "Technum Ore Rubble": 160
     },
-    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
   "Ignium Ore Rubble (Ore Vein Mining)": {
     "factory_type": "Ore Vein Miner",
     "inputs": {
-      "Ignium Ore Rubble (from environment)": 1
+      "Ignium Ore Rubble (from environment)": 160
     },
     "outputs": {
-      "Ignium Ore Rubble": 1
+      "Ignium Ore Rubble": 160
     },
-    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
   "Telluxite Ore Rubble (Ore Vein Mining)": {
     "factory_type": "Ore Vein Miner",
     "inputs": {
-      "Telluxite Ore Rubble (from environment)": 1
+      "Telluxite Ore Rubble (from environment)": 160
     },
     "outputs": {
-      "Telluxite Ore Rubble": 1
+      "Telluxite Ore Rubble": 160
     },
-    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
   "Mineral Rocks (Ore Vein Mining)": {
     "factory_type": "Ore Vein Miner",
     "inputs": {
-      "Mineral Rocks (from environment)": 1
+      "Mineral Rocks (from environment)": 160
     },
     "outputs": {
-      "Mineral Rocks": 1
+      "Mineral Rocks": 160
     },
-    "base_rate_per_min": 160,
     "resource_type": "ore"
   },
   "Air": {
     "factory_type": "Air Intake",
     "inputs": {
-      "Air (from environment)": 1
+      "Air (from environment)": 162000
     },
     "outputs": {
-      "Air": 1
+      "Air": 162000
     },
-    "base_rate_per_min": 1,
     "resource_type": "infinite"
   },
   "Water": {
-    "factory_type": "Pump",
+    "factory_type": "Liquid Intake",
     "inputs": {
-      "Water (from environment)": 1
+      "Water (from environment)": 30000
     },
     "outputs": {
-      "Water": 1
+      "Water": 30000
     },
-    "base_rate_per_min": 1,
     "resource_type": "infinite"
+  },
+  "Molten Xenoferrite": {
+    "factory_type": "Blast Furnace",
+    "inputs": {
+      "Xenoferrite Ore": 1280,
+      "Coked Ignium": 640,
+      "Mineral Rocks": 256,
+      "Hot Air": 324000
+    },
+    "outputs": {
+      "Molten Xenoferrite": 11520,
+      "Blast Furnace Slag": 1280
+    }
+  },
+  "Coked Ignium": {
+    "factory_type": "Smelter",
+    "inputs": {
+      "Ignium Ore": 16
+    },
+    "outputs": {
+      "Coked Ignium": 40
+    }
+  },
+  "Xenoferrite Plates (Tier 3)": {
+    "factory_type": "Heavy Caster",
+    "inputs": {
+      "Molten Xenoferrite": 3840
+    },
+    "outputs": {
+      "Xenoferrite Plates": 1280
+    }
+  },
+  "Machinery Parts": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Xenoferrite Plates": 40
+    },
+    "outputs": {
+      "Machinery Parts": 40
+    }
+  },
+  "Advanced Machinery Parts": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Machinery Parts": 30,
+      "Steel Beams": 15
+    },
+    "outputs": {
+      "Advanced Machinery Parts": 30
+    }
+  },
+  "Technum Rods": {
+    "factory_type": "Heavy Caster",
+    "inputs": {
+      "Molten Technum": 3840
+    },
+    "outputs": {
+      "Technum Rods": 1280
+    }
+  },
+  "Molten Technum": {
+    "factory_type": "Blast Furnace",
+    "inputs": {
+      "Technum Ore": 1280,
+      "Coked Ignium": 640,
+      "Mineral Rocks": 256,
+      "Hot Air": 324000
+    },
+    "outputs": {
+      "Molten Technum": 11520,
+      "Blast Furnace Slag": 1280
+    }
+  },
+  "Ignium Powder": {
+    "factory_type": "Crusher",
+    "inputs": {
+      "Ignium Ore Rubble": 12
+    },
+    "outputs": {
+      "Ignium Powder": 60
+    }
+  },
+  "Steel Beams": {
+    "factory_type": "Smelter",
+    "inputs": {
+      "Advanced Xenoferrite-Ignium Ore Blend": 15
+    },
+    "outputs": {
+      "Steel Beams": 30
+    }
+  },
+  "Advanced Xenoferrite-Ignium Ore Blend": {
+    "factory_type": "Crusher",
+    "inputs": {
+      "Xenoferrite Ore": 80,
+      "Ignium Ore": 40
+    },
+    "outputs": {
+      "Advanced Xenoferrite-Ignium Ore Blend": 20
+    }
+  },
+  "High-Tech Machinery Parts": {
+    "factory_type": "Fluid-assembler",
+    "inputs": {
+      "Superalloy": 10,
+      "Rubber": 20,
+      "Low Density Olumite": 50
+    },
+    "outputs": {
+      "High-Tech Machinery Parts": 20
+    }
+  },
+  "Nautical Chassis": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Superalloy": 40,
+      "Rubber": 40,
+      "Glass": 40,
+      "High-Tech Machinery Parts": 40
+    },
+    "outputs": {
+      "Nautical Chassis": 40
+    }
+  },
+  "Weapon Components": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Firmarlite Sheet": 10,
+      "Machinery Parts": 10,
+      "Explosives": 10
+    },
+    "outputs": {
+      "Weapon Components": 10
+    }
+  },
+  "Wire Coil": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Technum Rods": 40
+    },
+    "outputs": {
+      "Wire Coil": 80
+    }
+  },
+  "Electronic Components": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Technum Rods": 20,
+      "Wire Coil": 40
+    },
+    "outputs": {
+      "Electronic Components": 20
+    }
+  },
+  "Circuit Board": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Polymer Board": 12,
+      "Electronic Components": 24
+    },
+    "outputs": {
+      "Circuit Board": 12
+    }
+  },
+  "Telluxite Wafer": {
+    "factory_type": "Casting Machine",
+    "inputs": {
+      "Liquid Telluxite": 1000
+    },
+    "outputs": {
+      "Telluxite Wafer": 2.5
+    }
+  },
+  "CPU": {
+    "factory_type": "Chemical Processor",
+    "inputs": {
+      "Telluxite Wafer": 0.5,
+      "Polymer Board": 1,
+      "Olumic Acid": 40
+    },
+    "outputs": {
+      "CPU": 4
+    }
+  },
+  "Energy Cell": {
+    "factory_type": "Fluid-assembler",
+    "inputs": {
+      "Xenoferrite Plates": 6,
+      "Electronic Components": 12,
+      "Glass": 12,
+      "Olumic Acid": 120
+    },
+    "outputs": {
+      "Energy Cell": 12
+    }
+  },
+  "Explosives": {
+    "factory_type": "Fluid-assembler",
+    "inputs": {
+      "Ignium Powder": 48,
+      "Low Density Olumite": 600
+    },
+    "outputs": {
+      "Explosives": 12
+    }
+  },
+  "Glass": {
+    "factory_type": "Smelter",
+    "inputs": {
+      "Gravel": 60
+    },
+    "outputs": {
+      "Glass": 12
+    }
+  },
+  "Scout Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 8,
+      "Polymer Board": 8,
+      "Superalloy": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Scout Robot Torso": 4
+    }
+  },
+  "Scout Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Firmarlite Sheet": 8,
+      "CPU": 4,
+      "Glass": 8
+    },
+    "outputs": {
+      "Scout Robot Head": 4
+    }
+  },
+  "Scout Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Firmarlite Sheet": 8
+    },
+    "outputs": {
+      "Scout Robot Arm": 4
+    }
+  },
+  "Scout Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 8,
+      "Hydraulic Piston": 12,
+      "Firmarlite Sheet": 12,
+      "Rubber": 12
+    },
+    "outputs": {
+      "Scout Robot Leg": 4
+    }
+  },
+  "Superalloy": {
+    "factory_type": "Casting Machine",
+    "inputs": {
+      "Molten Superalloy": 1000
+    },
+    "outputs": {
+      "Superalloy": 20
+    }
+  },
+  "Molten Superalloy": {
+    "factory_type": "Electric Arc Furnace",
+    "inputs": {
+      "Firmarlite Sheet": 160,
+      "Telluxite Ingot": 40,
+      "Coked Ignium": 40
+    },
+    "outputs": {
+      "Molten Superalloy": 4000
+    }
+  },
+  "Liquid Telluxite": {
+    "factory_type": "Electric Arc Furnace",
+    "inputs": {
+      "Telluxite Ingot": 40
+    },
+    "outputs": {
+      "Liquid Telluxite": 2000
+    }
+  },
+  "Telluxite Ingot": {
+    "factory_type": "Smelter",
+    "inputs": {
+      "Telluxite Ore": 60
+    },
+    "outputs": {
+      "Telluxite Ingot": 15
+    }
+  },
+  "Firmarlite Sheet": {
+    "factory_type": "Lava smelter",
+    "inputs": {
+      "Firmarlite Bar": 10
+    },
+    "outputs": {
+      "Firmarlite Sheet": 10
+    }
+  },
+  "Polymer Board": {
+    "factory_type": "Casting Machine",
+    "inputs": {
+      "Liquid Polymer": 150
+    },
+    "outputs": {
+      "Polymer Board": 30
+    }
+  },
+  "Rubber": {
+    "factory_type": "Casting Machine",
+    "inputs": {
+      "Liquid Polymer": 150,
+      "High Density Olumite": 300
+    },
+    "outputs": {
+      "Rubber": 30
+    }
+  },
+  "High Density Olumite": {
+    "factory_type": "Distillation Column",
+    "inputs": {
+      "Impure High Density Olumite": 500
+    },
+    "outputs": {
+      "High Density Olumite": 400,
+      "Waste Gas": 100
+    }
+  },
+  "Impure High Density Olumite": {
+    "factory_type": "Distillation Column",
+    "inputs": {
+      "Crude Olumite": 1000,
+      "Steam": 600
+    },
+    "outputs": {
+      "Impure High Density Olumite": 500,
+      "Waste Gas": 500
+    }
+  },
+  "Olumic Acid": {
+    "factory_type": "Chemical Processor",
+    "inputs": {
+      "Ignium Powder": 120,
+      "Olumite Gas": 562.5,
+      "Water": 187.5
+    },
+    "outputs": {
+      "Olumic Acid": 300
+    }
+  },
+  "Liquid Polymer": {
+    "factory_type": "Distillation Column",
+    "inputs": {
+      "Crude Olumite": 1500
+    },
+    "outputs": {
+      "Liquid Polymer": 1125,
+      "Waste Gas": 750
+    }
+  },
+  "Olumite Gas": {
+    "factory_type": "Distillation Column",
+    "inputs": {
+      "Crude Olumite": 1500
+    },
+    "outputs": {
+      "Olumite Gas": 1350,
+      "Waste Gas": 150
+    }
+  },
+  "Low Density Olumite": {
+    "factory_type": "Distillation Column",
+    "inputs": {
+      "Crude Olumite": 1500
+    },
+    "outputs": {
+      "Low Density Olumite": 1500,
+      "Waste Gas": 375
+    }
+  },
+  "Steam": {
+    "factory_type": "Boiler",
+    "inputs": {
+      "Water": 1200,
+      "Ignium Ore Rubble": 21.42857
+    },
+    "outputs": {
+      "Steam": 3600
+    }
+  },
+  "Crude Olumite (Pumpjack)": {
+    "factory_type": "Pumpjack",
+    "inputs": {
+      "Crude Olumite (from environment)": 1800
+    },
+    "outputs": {
+      "Crude Olumite": 1800
+    },
+    "resource_type": "ore"
+  },
+  "Firmarlite Bar": {
+    "factory_type": "Shipping Pad",
+    "inputs": {
+      "Firmarlite Bar (from environment)": 1280
+    },
+    "outputs": {
+      "Firmarlite Bar": 1280
+    },
+    "resource_type": "infinite"
+  },
+  "High-Tech Robot Parts": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "High-Tech Machinery Parts": 2,
+      "Rubber": 2
+    },
+    "outputs": {
+      "High-Tech Robot Parts": 4
+    }
+  },
+  "Hover Engine": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Technum Rods": 10,
+      "Advanced Machinery Parts": 10,
+      "Electronic Components": 10
+    },
+    "outputs": {
+      "Hover Engine": 10
+    }
+  },
+  "Hydraulic Piston": {
+    "factory_type": "Fluid-assembler",
+    "inputs": {
+      "Steel Beams": 12,
+      "Low Density Olumite": 360
+    },
+    "outputs": {
+      "Hydraulic Piston": 12
+    }
+  },
+  "Robot Parts": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Firmarlite Sheet": 4,
+      "Advanced Machinery Parts": 2,
+      "Electronic Components": 8,
+      "Polymer Board": 4
+    },
+    "outputs": {
+      "Robot Parts": 4
+    }
+  },
+  "Hot Air": {
+    "factory_type": "Hot Air Stove",
+    "inputs": {
+      "Air": 108000
+    },
+    "outputs": {
+      "Hot Air": 108000
+    }
   }
 }

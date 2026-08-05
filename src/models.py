@@ -24,17 +24,10 @@ class Factory(BaseModel):
 # Request Models
 # ============================================================================
 
-class ModifierRequest(BaseModel):
-    """Speed, efficiency, and energy modifiers."""
-    speed: float = 0.0
-    efficiency: float = 0.0
-    energy: float = 1.0
-
-
 class RecipeOverride(BaseModel):
-    """Per-recipe overrides for tier and modifiers."""
+    """Per-recipe overrides for tier and robot."""
     tier: Optional[str] = None
-    modifiers: ModifierRequest = ModifierRequest()
+    robot: Optional[str] = None
 
 
 class CalculationRequest(BaseModel):
@@ -42,7 +35,8 @@ class CalculationRequest(BaseModel):
     outputs: list[Dict[str, Any]]
     global_tiers: Dict[str, str] = {}
     recipe_overrides: Dict[str, RecipeOverride] = {}
-    global_modifiers: Dict[str, ModifierRequest] = {}
+    global_robots: Dict[str, Optional[str]] = {}
+    workstation_level: int = 3
     research_efficiency: Dict[str, float] = {"ore": 0.0, "olumite": 0.0}
 
 

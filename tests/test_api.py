@@ -37,6 +37,27 @@ class TestRecipesEndpoint:
         assert "factory_type" in data["Xenoferrite Ore"]
 
 
+class TestRobotsEndpoint:
+    """Test /api/robots endpoint."""
+    
+    def test_get_robots_returns_data(self):
+        """Test that the robots endpoint returns workstation levels and robot definitions."""
+        response = client.get("/api/robots")
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "workstation_levels" in data
+        assert data["workstation_levels"]["3"] == 4.0
+        assert "robots" in data
+        assert "Light Bot" in data["robots"]
+        assert "factories" in data
+        # Ore Vein Miner (alias "Miner") should list Miner robots and pick the
+        # highest-efficiency one as default (Operator Robot 6% > Operator Bot 3%).
+        ovm = data["factories"]["Ore Vein Miner"]
+        assert "Light Bot" in ovm["robots"]
+        assert ovm["default"] == "Operator Robot"
+
+
 class TestCalculateEndpoint:
     """Test /api/calculate endpoint."""
     
@@ -45,9 +66,8 @@ class TestCalculateEndpoint:
         request = {
             "outputs": [{"item": "Xenoferrite Ore", "rate": 40}],
             "global_tiers": {"Crusher": "Tier 1"},
-            "global_modifiers": {
-                "Crusher": {"speed": 0.0, "efficiency": 0.0, "energy": 1.0}
-            },
+            "global_robots": {"Crusher": None},
+            "workstation_level": 1,
             "research_efficiency": {"ore": 0.0, "olumite": 0.0}
         }
         
@@ -61,14 +81,13 @@ class TestCalculateEndpoint:
         assert "raw_resources" in data["results"]
         assert "total_power_kw" in data["results"]
     
-    def test_calculation_with_efficiency_modifier(self):
-        """Test calculation with efficiency modifier applied."""
+    def test_calculation_with_efficiency_robot(self):
+        """Test calculation with an efficiency robot applied."""
         request = {
             "outputs": [{"item": "Xenoferrite Ore", "rate": 40}],
             "global_tiers": {"Crusher": "Tier 1"},
-            "global_modifiers": {
-                "Crusher": {"speed": 0.0, "efficiency": 0.2, "energy": 1.0}
-            },
+            "global_robots": {"Crusher": "Combat Robot"},
+            "workstation_level": 1,
             "research_efficiency": {"ore": 0.0, "olumite": 0.0}
         }
         
@@ -77,11 +96,10 @@ class TestCalculateEndpoint:
         assert response.status_code == 200
         data = response.json()
         
-        # Check that efficiency was applied (inputs should be reduced)
+        # Combat Robot gives +5% efficiency → inputs 40/1.05 = 38.10/min
         chain = data["results"]["production_chain"]
         xenoferrite = next(n for n in chain if n["item"] == "Xenoferrite Ore")
-        # With 20% efficiency, inputs should be 40/1.2 = 33.33/min
-        assert xenoferrite["inputs_required"]["Xenoferrite Ore Rubble"]["rate"] == pytest.approx(33.33, rel=0.01)
+        assert xenoferrite["inputs_required"]["Xenoferrite Ore Rubble"]["rate"] == pytest.approx(38.10, rel=0.01)
     
     def test_calculation_with_multiple_outputs(self):
         """Test calculation with multiple requested outputs."""
@@ -91,9 +109,7 @@ class TestCalculateEndpoint:
                 {"item": "Technum Ore", "rate": 10}
             ],
             "global_tiers": {"Crusher": "Tier 1"},
-            "global_modifiers": {
-                "Crusher": {"speed": 0.0, "efficiency": 0.0, "energy": 1.0}
-            },
+            "global_robots": {"Crusher": None},
             "research_efficiency": {"ore": 0.0, "olumite": 0.0}
         }
         
@@ -108,7 +124,7 @@ class TestCalculateEndpoint:
         request = {
             "outputs": [{"item": "NonExistentItem", "rate": 20}],
             "global_tiers": {"Crusher": "Tier 1"},
-            "global_modifiers": {},
+            "global_robots": {},
             "research_efficiency": {"ore": 0.0, "olumite": 0.0}
         }
         
@@ -122,7 +138,7 @@ class TestCalculateEndpoint:
         request = {
             "outputs": [],
             "global_tiers": {},
-            "global_modifiers": {},
+            "global_robots": {},
             "research_efficiency": {}
         }
         
@@ -141,7 +157,7 @@ class TestCalculationCache:
         request = {
             "outputs": [{"item": "Xenoferrite Ore", "rate": 40}],
             "global_tiers": {"Crusher": "Tier 1"},
-            "global_modifiers": {},
+            "global_robots": {},
             "research_efficiency": {}
         }
         
@@ -160,7 +176,7 @@ class TestCalculationCache:
         request = {
             "outputs": [{"item": "ItemA", "rate": 20}],
             "global_tiers": {"Assembler": "Tier 1"},
-            "global_modifiers": {},
+            "global_robots": {},
             "research_efficiency": {}
         }
         
@@ -189,17 +205,19 @@ class TestXenoferriteCalculation:
         """
         Test production chain for Xenoferrite Ore:
         - Request: 40/min Xenoferrite Ore
-        - Crusher: 40/min base rate, 1:1 input/output
+        - Crusher: 40/min base rate, 1:1 input/output, no robot
         - Ore Vein Miner: 160/min base rate, 1:1 input/output
-        - Global modifier: Ore Vein Miner efficiency +20%
+        - Robot: Operator Robot on Ore Vein Miner (efficiency +6%) at workstation level 1
         - Research efficiency: ore +10%
         """
         request = {
             "outputs": [{"item": "Xenoferrite Ore", "rate": 40}],
             "global_tiers": {"Crusher": "Tier 1", "Ore Vein Miner": "Tier 1"},
-            "global_modifiers": {
-                "Ore Vein Miner": {"speed": 0.0, "efficiency": 0.2, "energy": 1.0}
+            "global_robots": {
+                "Crusher": None,
+                "Ore Vein Miner": "Operator Robot"
             },
+            "workstation_level": 1,
             "research_efficiency": {"ore": 0.1, "olumite": 0.0}
         }
         
@@ -209,22 +227,22 @@ class TestXenoferriteCalculation:
         
         chain = data["results"]["production_chain"]
         
-        # Xenoferrite Ore: 40/min requested, 40/min base rate
+        # Xenoferrite Ore: 40/min requested, 40/min base rate, no speed buff
         # Factories = 40/40 = 1 Crusher
         xenoferrite = next(n for n in chain if n["item"] == "Xenoferrite Ore")
         assert xenoferrite["factories"]["count"] == pytest.approx(1.0)
         
-        # Ore Vein Miner: 40/min needed (1:1 ratio), 160/min base rate with 20% efficiency
+        # Ore Vein Miner: 40/min needed (1:1 ratio), 160/min base rate
         # Factories = 40/160 = 0.25 Ore Vein Miner
         ore_vein = next(n for n in chain if n["item"] == "Xenoferrite Ore Rubble")
         assert ore_vein["factories"]["count"] == pytest.approx(0.25)
         
         # Raw input rate: 40/min
-        # World consumption with combined efficiency (1 + 0.2 + 0.1 = 1.3): 40/1.3 = 30.77/min
+        # World consumption with combined efficiency (1 + 0.06 + 0.1 = 1.16): 40/1.16 = 34.48/min
         raw_resources = data["results"]["raw_resources"]
         assert "Xenoferrite Ore Rubble (from environment)" in raw_resources
         world_consumption = raw_resources["Xenoferrite Ore Rubble (from environment)"]["world_consumption"]
-        assert world_consumption == pytest.approx(30.77, rel=0.01)
+        assert world_consumption == pytest.approx(34.48, rel=0.01)
         
         # Total power should be calculated
         assert data["results"]["total_power_kw"] > 0

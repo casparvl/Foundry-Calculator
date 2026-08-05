@@ -8,12 +8,12 @@
       },
       {
         "name": "Tier 2",
-        "speed_multiplier": 1.0,
+        "speed_multiplier": 1.5,
         "power_kw": 125
       },
       {
         "name": "Tier 3",
-        "speed_multiplier": 1.0,
+        "speed_multiplier": 2.0,
         "power_kw": 250
       }
     ]
@@ -204,12 +204,12 @@
       }
     ]
   },
-  "Pump": {
+  "Liquid Intake": {
     "tiers": [
       {
         "name": "Tier 1",
         "speed_multiplier": 1.0,
-        "power_kw": 8500
+        "power_kw": 0
       }
     ]
   },
@@ -219,6 +219,70 @@
         "name": "Tier 1",
         "speed_multiplier": 1.0,
         "power_kw": 500
+      }
+    ]
+  },
+  "Drone Miner": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 50
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 1.5,
+        "power_kw": 100
+      }
+    ]
+  },
+  "Pumpjack": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 200
+      }
+    ]
+  },
+  "Xeno-Scrap-Extractor": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 500
+      }
+    ]
+  },
+  "Xeno-Crystal-Extractor": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 500
+      }
+    ]
+  },
+  "Boiler": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 0
+      }
+    ]
+  },
+  "Shipping Pad": {
+    "tiers": [
+      {
+        "name": "Tier 1",
+        "speed_multiplier": 1.0,
+        "power_kw": 0
+      },
+      {
+        "name": "Tier 2",
+        "speed_multiplier": 2.0,
+        "power_kw": 0
       }
     ]
   }

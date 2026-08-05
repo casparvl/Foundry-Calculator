@@ -19,28 +19,28 @@ async function calculate() {
             return;
         }
         
-        // Gather global tiers and modifiers
+        // Gather global tiers and robots
         const globalTiers = {};
-        const globalModifiers = {};
+        const globalRobots = {};
         document.querySelectorAll('.tier-select').forEach(select => {
             const factory = select.dataset.factory;
             const tier = select.value;
             if (tier) {
                 globalTiers[factory] = tier;
             }
-            // Get modifiers from the same row
+            // Get robot from the same row (empty selection → explicit no robot)
             const row = select.closest('.row');
             if (row) {
-                const speedEl = row.querySelector('.speed-input');
-                const efficiencyEl = row.querySelector('.efficiency-input');
-                const energyEl = row.querySelector('.energy-input');
-                globalModifiers[factory] = {
-                    speed: speedEl ? (parseFloat(speedEl.value) || 0) : 0,
-                    efficiency: efficiencyEl ? (parseFloat(efficiencyEl.value) || 0) : 0,
-                    energy: energyEl ? (parseFloat(energyEl.value) || 1) : 1
-                };
+                const robotEl = row.querySelector('.robot-select');
+                if (robotEl) {
+                    globalRobots[factory] = robotEl.value || null;
+                }
             }
         });
+        
+        // Gather workstation level
+        const workstationLevelEl = document.querySelector('.workstation-level');
+        const workstationLevel = workstationLevelEl ? (parseInt(workstationLevelEl.value, 10) || 3) : 3;
         
         // Gather research efficiency
         const oreResearchEl = document.querySelector('.ore-research-input');
@@ -53,24 +53,24 @@ async function calculate() {
         document.querySelectorAll('.override-tier').forEach(select => {
             const item = select.dataset.item;
             const tier = select.value;
-            const speedEl = document.querySelector(`.override-speed[data-item="${item}"]`);
-            const efficiencyEl = document.querySelector(`.override-efficiency[data-item="${item}"]`);
-            const energyEl = document.querySelector(`.override-energy[data-item="${item}"]`);
+            const robotEl = document.querySelector(`.override-robot[data-item="${item}"]`);
+            const robotVal = robotEl ? robotEl.value : '';
             
-            const speedVal = speedEl && speedEl.value !== '' ? parseFloat(speedEl.value) : null;
-            const efficiencyVal = efficiencyEl && efficiencyEl.value !== '' ? parseFloat(efficiencyEl.value) : null;
-            const energyVal = energyEl && energyEl.value !== '' ? parseFloat(energyEl.value) : null;
-            
-            const hasOverride = tier || speedVal !== null || efficiencyVal !== null || energyVal !== null;
+            // 'none' means explicitly no robot; '' means use global; else a robot name
+            let robot;
+            if (robotVal === 'none') {
+                robot = null;
+            } else if (robotVal === '') {
+                robot = undefined;
+            } else {
+                robot = robotVal;
+            }
+            const hasOverride = tier || robot !== undefined;
             
             if (hasOverride) {
                 recipeOverrides[item] = {
                     tier: tier || null,
-                    modifiers: {
-                        speed: speedVal !== null ? speedVal : 0,
-                        efficiency: efficiencyVal !== null ? efficiencyVal : 0,
-                        energy: energyVal !== null ? energyVal : 1
-                    }
+                    robot: robot
                 };
             }
         });
@@ -79,7 +79,8 @@ async function calculate() {
         const request = {
             outputs: outputs,
             global_tiers: globalTiers,
-            global_modifiers: globalModifiers,
+            global_robots: globalRobots,
+            workstation_level: workstationLevel,
             recipe_overrides: recipeOverrides,
             research_efficiency: {
                 ore: oreResearch,

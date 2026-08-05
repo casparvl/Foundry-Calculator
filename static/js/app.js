@@ -2,6 +2,7 @@
 
 let factoryData = {};
 let recipeData = {};
+let robotData = {};
 let calculationResult = null;
 
 // Initialize the application
@@ -21,17 +22,19 @@ async function loadConfiguration() {
     }
     
     try {
-        const [factoriesResponse, recipesResponse] = await Promise.all([
+        const [factoriesResponse, recipesResponse, robotsResponse] = await Promise.all([
             fetch('/api/factories'),
-            fetch('/api/recipes')
+            fetch('/api/recipes'),
+            fetch('/api/robots')
         ]);
         
-        if (!factoriesResponse.ok || !recipesResponse.ok) {
+        if (!factoriesResponse.ok || !recipesResponse.ok || !robotsResponse.ok) {
             throw new Error('API not ready');
         }
         
         factoryData = await factoriesResponse.json();
         recipeData = await recipesResponse.json();
+        robotData = await robotsResponse.json();
         
         // Hide error messages on success
         const msg = document.getElementById('config-error-message');
@@ -63,6 +66,21 @@ function populateGlobalSettings() {
     const container = document.getElementById('global-settings-container');
     container.innerHTML = '';
     
+    // Robot workstation level
+    const wsRow = document.createElement('div');
+    wsRow.className = 'row mb-3';
+    wsRow.innerHTML = `
+        <div class="col-md-3">
+            <label class="form-label fw-bold">Robot Workstation Level</label>
+            <select class="form-select workstation-level" value="3">
+                <option value="1">Workstation I</option>
+                <option value="2">Workstation II</option>
+                <option value="3" selected>Workstation III</option>
+            </select>
+        </div>
+    `;
+    container.appendChild(wsRow);
+    
     // Factory tier selections
     const tierRow = document.createElement('div');
     tierRow.className = 'row mb-3';
@@ -74,54 +92,34 @@ function populateGlobalSettings() {
         const row = document.createElement('div');
         row.className = 'row mb-2';
         
-        let tierOptions = '<option value="">Select Tier</option>';
-        factory.tiers.forEach((tier, index) => {
-            tierOptions += `<option value="${tier.name}" ${index === 0 ? 'selected' : ''}>${tier.name}</option>`;
-        });
+        let tierHtml;
+        if (factory.tiers.length === 1) {
+            // Single-tier factory: no dropdown, show tier as plain text
+            tierHtml = `
+                <div class="form-control-plaintext py-1">${factory.tiers[0].name}</div>
+                <input type="hidden" class="tier-select" data-factory="${factoryName}" value="${factory.tiers[0].name}">
+            `;
+        } else {
+            // Multi-tier factory: default to the highest tier
+            let tierOptions = '';
+            factory.tiers.forEach((tier, index) => {
+                tierOptions += `<option value="${tier.name}" ${index === factory.tiers.length - 1 ? 'selected' : ''}>${tier.name}</option>`;
+            });
+            tierHtml = `
+                <select class="form-select tier-select" data-factory="${factoryName}">
+                    ${tierOptions}
+                </select>
+            `;
+        }
         
         row.innerHTML = `
             <div class="col-md-4">
                 <label class="form-label">${factoryName}</label>
-                <select class="form-select tier-select" data-factory="${factoryName}">
-                    ${tierOptions}
-                </select>
+                ${tierHtml}
             </div>
             <div class="col-md-8">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Speed</span>
-                    <input type="number" class="form-control speed-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
-                    <span class="input-group-text">Eff.</span>
-                    <input type="number" class="form-control efficiency-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
-                    <span class="input-group-text">Ene.</span>
-                    <input type="number" class="form-control energy-input" data-factory="${factoryName}" value="1" step="0.1">
-                </div>
-            </div>
-        `;
-        container.appendChild(row);
-    }
-    
-    // Global modifier inputs
-    const modifierRow = document.createElement('div');
-    modifierRow.className = 'row mb-2';
-    modifierRow.innerHTML = `
-        <div class="col-12"><h6 class="mt-3">Global Modifiers</h6></div>
-    `;
-    container.appendChild(modifierRow);
-    
-    for (const factoryName of Object.keys(factoryData)) {
-        const row = document.createElement('div');
-        row.className = 'row mb-2';
-        row.innerHTML = `
-            <div class="col-md-3">
-                <label class="form-label">${factoryName}</label>
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">Speed</span>
-                    <input type="number" class="form-select speed-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
-                    <span class="input-group-text">Eff.</span>
-                    <input type="number" class="form-select efficiency-input" data-factory="${factoryName}" value="0" step="0.1" min="-1">
-                    <span class="input-group-text">Ene.</span>
-                    <input type="number" class="form-select energy-input" data-factory="${factoryName}" value="1" step="0.1">
-                </div>
+                <label class="form-label">Robot</label>
+                ${robotSelectHtml(factoryName, 'robot-select')}
             </div>
         `;
         container.appendChild(row);
@@ -148,6 +146,24 @@ function populateGlobalSettings() {
     container.appendChild(researchRow);
 }
 
+// Build a robot dropdown for a factory (used in global settings)
+function robotSelectHtml(factoryName, className) {
+    const info = (robotData.factories || {})[factoryName];
+    const robots = (info && info.robots) ? info.robots : [];
+    const defaultValue = (info && info.default) ? info.default : '';
+    
+    let options = `<option value="">None (no robot)</option>`;
+    for (const robotName of robots) {
+        const robot = (robotData.robots || {})[robotName];
+        const label = robot
+            ? `${robotName} (${robot.buff_type === 'speed' ? 'Speed' : 'Efficiency'} +${Math.round(robot.buff_percentage * 100)}%)`
+            : robotName;
+        const selected = robotName === defaultValue ? 'selected' : '';
+        options += `<option value="${robotName}" ${selected}>${label}</option>`;
+    }
+    return `<select class="form-select ${className}" data-factory="${factoryName}">${options}</select>`;
+}
+
 // Populate recipe override dropdowns (defensive: skip recipes with missing factory)
 function populateRecipeOverrides() {
     const container = document.getElementById('recipe-overrides-container');
@@ -171,10 +187,25 @@ function populateRecipeOverrides() {
         const row = document.createElement('div');
         row.className = 'row mb-3';
         
-        let tierOptions = '<option value="">Use Global</option>';
-        factory.tiers.forEach(tier => {
-            tierOptions += `<option value="${tier.name}">${tier.name}</option>`;
-        });
+        let tierHtml;
+        if (factory.tiers.length === 1) {
+            // Single-tier factory: no dropdown, show tier as plain text
+            // (hidden empty override-tier keeps "Use Global" semantics and modifier collection)
+            tierHtml = `
+                <div class="form-control-plaintext py-1">${factory.tiers[0].name}</div>
+                <input type="hidden" class="override-tier" data-item="${itemName}" value="">
+            `;
+        } else {
+            let tierOptions = '<option value="">Use Global</option>';
+            factory.tiers.forEach(tier => {
+                tierOptions += `<option value="${tier.name}">${tier.name}</option>`;
+            });
+            tierHtml = `
+                <select class="form-select form-select-sm override-tier" data-item="${itemName}">
+                    ${tierOptions}
+                </select>
+            `;
+        }
         
         row.innerHTML = `
             <div class="col-md-12">
@@ -182,29 +213,36 @@ function populateRecipeOverrides() {
                 <div class="row">
                     <div class="col-md-3">
                         <label class="form-label small">Tier</label>
-                        <select class="form-select form-select-sm override-tier" data-item="${itemName}">
-                            ${tierOptions}
-                        </select>
+                        ${tierHtml}
                     </div>
-                    <div class="col-md-9">
-                        <label class="form-label small">Modifiers</label>
-                        <div class="row">
-                            <div class="col">
-                                <input type="number" class="form-select form-select-sm override-speed" data-item="${itemName}" placeholder="Speed" step="0.1" min="-1">
-                            </div>
-                            <div class="col">
-                                <input type="number" class="form-select form-select-sm override-efficiency" data-item="${itemName}" placeholder="Eff." step="0.1" min="-1">
-                            </div>
-                            <div class="col">
-                                <input type="number" class="form-select form-select-sm override-energy" data-item="${itemName}" placeholder="Ene." step="0.1">
-                            </div>
-                        </div>
+                    <div class="col-md-5">
+                        <label class="form-label small">Robot</label>
+                        <select class="form-select form-select-sm override-robot" data-item="${itemName}" data-factory="${recipe.factory_type}">
+                            <option value="">Use Global</option>
+                            <option value="none">None (no robot)</option>
+                            ${recipeRobotOptions(recipe.factory_type)}
+                        </select>
                     </div>
                 </div>
             </div>
         `;
         container.appendChild(row);
     }
+}
+
+// Robot options for a recipe's factory (for per-recipe override dropdown)
+function recipeRobotOptions(factoryName) {
+    const info = (robotData.factories || {})[factoryName];
+    const robots = (info && info.robots) ? info.robots : [];
+    let options = '';
+    for (const robotName of robots) {
+        const robot = (robotData.robots || {})[robotName];
+        const label = robot
+            ? `${robotName} (${robot.buff_type === 'speed' ? 'Speed' : 'Efficiency'} +${Math.round(robot.buff_percentage * 100)}%)`
+            : robotName;
+        options += `<option value="${robotName}">${label}</option>`;
+    }
+    return options;
 }
 
 // Add a new output row
@@ -216,7 +254,13 @@ function addOutputRow() {
     row.className = 'row output-row align-items-end';
     
     let itemOptions = '<option value="">Select Item</option>';
-    for (const itemName of Object.keys(recipeData)) {
+    const productNames = new Set();
+    for (const recipe of Object.values(recipeData)) {
+        for (const outItem of Object.keys(recipe.outputs || {})) {
+            productNames.add(outItem);
+        }
+    }
+    for (const itemName of [...productNames].sort()) {
         itemOptions += `<option value="${itemName}">${itemName}</option>`;
     }
     
