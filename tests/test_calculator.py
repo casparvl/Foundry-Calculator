@@ -363,3 +363,78 @@ class TestSharedInputs:
         item_c = next((n for n in chain if n["item"] == "ItemC"), None)
         assert item_c is not None
         # Should be sum of ItemA's need + ItemB's need
+        # ItemA needs 50 ItemC, ItemB needs 35 ItemC -> 85 total
+        assert item_c["requested_rate"] == pytest.approx(85.0)
+
+
+class TestMultiDepthConsumers:
+    """Regression test: an item consumed at multiple depths must be produced at
+    the full summed rate, not just one consumer's rate."""
+
+    FACTORIES = {
+        "Assembler": {
+            "tiers": [
+                {"name": "Tier 1", "speed_multiplier": 1.0, "power_kw": 10}
+            ]
+        },
+        "Miner": {
+            "tiers": [
+                {"name": "Tier 1", "speed_multiplier": 1.0, "power_kw": 10}
+            ]
+        }
+    }
+
+    RECIPES = {
+        "ItemA": {
+            "factory_type": "Assembler",
+            "inputs": {"ItemB": 25, "ItemC": 50},
+            "outputs": {"ItemA": 10}
+        },
+        "ItemB": {
+            "factory_type": "Assembler",
+            "inputs": {"ItemC": 10, "ItemD": 4},
+            "outputs": {"ItemB": 10}
+        },
+        "ItemC": {
+            "factory_type": "Assembler",
+            "inputs": {"ItemE": 100},
+            "outputs": {"ItemC": 100}
+        },
+        "ItemD": {
+            "factory_type": "Miner",
+            "inputs": {"ore_from_world": 50},
+            "outputs": {"ItemD": 50},
+            "resource_type": "ore"
+        },
+        "ItemE": {
+            "factory_type": "Miner",
+            "inputs": {"ore_from_world": 100},
+            "outputs": {"ItemE": 100},
+            "resource_type": "ore"
+        }
+    }
+
+    def test_item_with_consumers_at_multiple_depths(self):
+        """ItemC is consumed directly by ItemA and indirectly by ItemB
+        (via ItemB -> ItemC). The ItemC node must sum both demands."""
+        from src.models import CalculationRequest
+
+        solver = ProductionChainSolver(self.FACTORIES, self.RECIPES, {})
+        request = CalculationRequest(
+            outputs=[{"item": "ItemA", "rate": 10}, {"item": "ItemB", "rate": 10}],
+            global_tiers={"Assembler": "Tier 1"},
+            global_robots={},
+            research_efficiency={"ore": 0.0, "olumite": 0.0}
+        )
+
+        result = solver.calculate(request)
+
+        chain = result["production_chain"]
+        item_c = next(n for n in chain if n["item"] == "ItemC")
+        # ItemA consumes 50, ItemB consumes 35 -> total 85
+        assert item_c["requested_rate"] == pytest.approx(85.0)
+        assert item_c["outputs_produced"]["ItemC"] == pytest.approx(85.0)
+        assert item_c["factories"]["count"] == pytest.approx(0.85)
+        # ItemE demand must match ItemC production (85)
+        item_e = next(n for n in chain if n["item"] == "ItemE")
+        assert item_e["requested_rate"] == pytest.approx(85.0)

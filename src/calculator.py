@@ -51,7 +51,47 @@ class ProductionChainSolver:
             rate = output["rate"]
             items_needed[item] = items_needed.get(item, 0) + rate
         
-        # Process items (BFS to handle dependencies)
+        # Phase 1: propagate demands to a fixpoint (order-independent).
+        # Each recipe only propagates the delta of demand it hasn't seen yet, so
+        # consumers at any depth contribute fully regardless of processing order.
+        propagated: Dict[str, float] = {}
+        pending = list(items_needed.keys())
+        while pending:
+            item = pending.pop()
+            delta = items_needed.get(item, 0.0) - propagated.get(item, 0.0)
+            if delta <= 0:
+                continue
+            propagated[item] = items_needed.get(item, 0.0)
+            
+            # Check if item has a recipe (direct or via output lookup)
+            recipe_name = item if item in self.recipes else self._output_to_recipe.get(item)
+            if not recipe_name:
+                # Basic resource or world input: nothing to propagate
+                continue
+            recipe = self.recipes[recipe_name]
+            if "resource_type" in recipe:
+                # World resource recipe: inputs come from the environment
+                continue
+            
+            factory_type = recipe["factory_type"]
+            robot_name = self._robot_for(request, factory_type, recipe_name)
+            _, efficiency_modifier, _ = self._robot_effects(
+                robot_name, request.workstation_level
+            )
+            efficiency = 1 + efficiency_modifier
+            primary_output_amount = list(recipe["outputs"].values())[0]
+            
+            for input_item, input_amount in recipe["inputs"].items():
+                input_rate = (
+                    delta * input_amount / primary_output_amount / efficiency
+                )
+                if input_rate > 0:
+                    items_needed[input_item] = (
+                        items_needed.get(input_item, 0) + input_rate
+                    )
+                    pending.append(input_item)
+        
+        # Phase 2: build nodes for every produced item using the final demands
         processed_items = set()
         queue = list(items_needed.keys())
         
@@ -59,6 +99,7 @@ class ProductionChainSolver:
             item = queue.pop(0)
             if item in processed_items:
                 continue
+            processed_items.add(item)
             
             # Check if item has a recipe (direct or via output lookup)
             recipe_name = item if item in self.recipes else self._output_to_recipe.get(item)
@@ -69,7 +110,6 @@ class ProductionChainSolver:
                         total_per_min=items_needed[item],
                         type="basic"
                     )
-                processed_items.add(item)
                 continue
             
             # Process this item's production
@@ -110,8 +150,7 @@ class ProductionChainSolver:
             
             for input_item, input_amount in recipe["inputs"].items():
                 # Calculate input rate based on output ratio
-                output_amount = list(recipe["outputs"].values())[0]
-                input_rate = (items_needed[item] * input_amount / output_amount)
+                input_rate = (items_needed[item] * input_amount / primary_output_amount)
                 
                 if is_world_resource:
                     # For world resources, don't apply factory efficiency yet
@@ -131,9 +170,7 @@ class ProductionChainSolver:
                         source="recipe"
                     )
                     
-                    # Add to items needed for next iteration
-                    items_needed[input_item] = items_needed.get(input_item, 0) + input_rate
-                    if input_item not in processed_items and input_item not in queue:
+                    if input_item in items_needed and input_item not in processed_items:
                         queue.append(input_item)
             
             # Calculate power (proportional to factory count)
@@ -163,12 +200,11 @@ class ProductionChainSolver:
             # Handle world resources (mined from environment or infinite)
             if is_world_resource:
                 resource_type = recipe["resource_type"]
-                output_amount = list(recipe["outputs"].values())[0]
                 
                 if resource_type == "infinite":
                     # Infinite resources: no efficiency reduction
                     for input_item, input_amount in recipe["inputs"].items():
-                        raw_input_rate = items_needed[item] * input_amount / output_amount
+                        raw_input_rate = items_needed[item] * input_amount / primary_output_amount
                         raw_resources[input_item] = RawResourceInfo(
                             total_per_min=raw_input_rate,
                             type=resource_type,
@@ -178,7 +214,7 @@ class ProductionChainSolver:
                     # Ore/olumite resources: apply both robot + research efficiency
                     research_eff = request.research_efficiency.get(resource_type, 0.0)
                     for input_item, input_amount in recipe["inputs"].items():
-                        raw_input_rate = items_needed[item] * input_amount / output_amount
+                        raw_input_rate = items_needed[item] * input_amount / primary_output_amount
                         total_efficiency = 1 + efficiency_modifier + research_eff
                         world_consumption = raw_input_rate / total_efficiency
                         raw_resources[input_item] = RawResourceInfo(
@@ -186,8 +222,6 @@ class ProductionChainSolver:
                             type=resource_type,
                             world_consumption=world_consumption
                         )
-            
-            processed_items.add(item)
         
         # Build final result
         result = {
