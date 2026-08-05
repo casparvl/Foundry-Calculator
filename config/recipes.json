@@ -585,5 +585,532 @@
     "outputs": {
       "Hot Air": 108000
     }
+  },
+  "Scout Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Scout Robot Head": 32,
+      "Scout Robot Torso": 32,
+      "Scout Robot Arm": 64,
+      "Scout Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Scout Robot": 32
+    }
+  },
+  "Paint": {
+    "factory_type": "Chemical Processor",
+    "inputs": {
+      "Low Density Olumite": 400,
+      "Olumite Gas": 400,
+      "Water": 400
+    },
+    "outputs": {
+      "Paint": 800
+    }
+  },
+  "Personal Assistant Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Personal Assistant Robot Head": 32,
+      "Personal Assistant Robot Torso": 32,
+      "Personal Assistant Robot Arm": 64,
+      "Personal Assistant Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Personal Assistant Robot": 32
+    }
+  },
+  "Operator Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Operator Robot Head": 32,
+      "Operator Robot Torso": 32,
+      "Operator Robot Arm": 64,
+      "Operator Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Operator Robot": 32
+    }
+  },
+  "Farmer Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Farmer Robot Head": 32,
+      "Farmer Robot Torso": 32,
+      "Farmer Robot Arm": 64,
+      "Farmer Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Farmer Robot": 32
+    }
+  },
+  "Hazard Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Hazard Robot Head": 32,
+      "Hazard Robot Torso": 32,
+      "Hazard Robot Arm": 64,
+      "Hazard Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Hazard Robot": 32
+    }
+  },
+  "Combat Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Combat Robot Head": 32,
+      "Combat Robot Torso": 32,
+      "Combat Robot Arm": 64,
+      "Combat Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Combat Robot": 32
+    }
+  },
+  "Assault Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Assault Robot Head": 32,
+      "Assault Robot Torso": 32,
+      "Assault Robot Arm": 64,
+      "Assault Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Assault Robot": 32
+    }
+  },
+  "Miner Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Miner Robot Head": 32,
+      "Miner Robot Torso": 32,
+      "Miner Robot Arm": 64,
+      "Miner Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Miner Robot": 32
+    }
+  },
+  "Science Robot": {
+    "factory_type": "Assembly Line",
+    "inputs": {
+      "Science Robot Head": 32,
+      "Science Robot Torso": 32,
+      "Science Robot Arm": 64,
+      "Science Robot Leg": 64,
+      "Paint": 3200
+    },
+    "outputs": {
+      "Science Robot": 32
+    }
+  },
+  "Personal Assistant Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Firmarlite Sheet": 8,
+      "Circuit Board": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Personal Assistant Robot Torso": 4
+    }
+  },
+  "Personal Assistant Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "CPU": 4,
+      "Glass": 4
+    },
+    "outputs": {
+      "Personal Assistant Robot Head": 4
+    }
+  },
+  "Personal Assistant Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Xenoferrite Plates": 4
+    },
+    "outputs": {
+      "Personal Assistant Robot Arm": 4
+    }
+  },
+  "Personal Assistant Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Xenoferrite Plates": 4
+    },
+    "outputs": {
+      "Personal Assistant Robot Leg": 4
+    }
+  },
+  "Operator Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Xenoferrite Plates": 8,
+      "Circuit Board": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Operator Robot Torso": 4
+    }
+  },
+  "Operator Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Xenoferrite Plates": 4,
+      "CPU": 16,
+      "Circuit Board": 4
+    },
+    "outputs": {
+      "Operator Robot Head": 4
+    }
+  },
+  "Operator Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Rubber": 8,
+      "Modular Building Planner": 4
+    },
+    "outputs": {
+      "Operator Robot Arm": 4
+    }
+  },
+  "Operator Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Xenoferrite Plates": 4,
+      "Rubber": 8
+    },
+    "outputs": {
+      "Operator Robot Leg": 4
+    }
+  },
+  "Farmer Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Xenoferrite Plates": 8,
+      "Barrel": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Farmer Robot Torso": 4
+    }
+  },
+  "Farmer Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "CPU": 4,
+      "Polymer Board": 4
+    },
+    "outputs": {
+      "Farmer Robot Head": 4
+    }
+  },
+  "Farmer Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Xenoferrite Plates": 4
+    },
+    "outputs": {
+      "Farmer Robot Arm": 4
+    }
+  },
+  "Farmer Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Xenoferrite Plates": 4
+    },
+    "outputs": {
+      "Farmer Robot Leg": 4
+    }
+  },
+  "Hazard Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Superalloy": 12,
+      "Circuit Board": 4,
+      "Energy Cell": 8
+    },
+    "outputs": {
+      "Hazard Robot Torso": 4
+    }
+  },
+  "Hazard Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Superalloy": 4,
+      "CPU": 8
+    },
+    "outputs": {
+      "Hazard Robot Head": 4
+    }
+  },
+  "Hazard Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Superalloy": 4
+    },
+    "outputs": {
+      "Hazard Robot Arm": 4
+    }
+  },
+  "Hazard Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Superalloy": 4
+    },
+    "outputs": {
+      "Hazard Robot Leg": 4
+    }
+  },
+  "Combat Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "CPU": 4,
+      "Steel Beams": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Combat Robot Torso": 4
+    }
+  },
+  "Combat Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Firmarlite Sheet": 4,
+      "Weapon Components": 8
+    },
+    "outputs": {
+      "Combat Robot Head": 4
+    }
+  },
+  "Combat Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Steel Beams": 4,
+      "Weapon Components": 4
+    },
+    "outputs": {
+      "Combat Robot Arm": 4
+    }
+  },
+  "Combat Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Steel Beams": 4
+    },
+    "outputs": {
+      "Combat Robot Leg": 4
+    }
+  },
+  "Assault Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "CPU": 4,
+      "Superalloy": 8,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Assault Robot Torso": 4
+    }
+  },
+  "Assault Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Superalloy": 4,
+      "CPU": 4
+    },
+    "outputs": {
+      "Assault Robot Head": 4
+    }
+  },
+  "Assault Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Superalloy": 4,
+      "Weapon Components": 16
+    },
+    "outputs": {
+      "Assault Robot Arm": 4
+    }
+  },
+  "Assault Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "High-Tech Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Superalloy": 4,
+      "Rubber": 8
+    },
+    "outputs": {
+      "Assault Robot Leg": 4
+    }
+  },
+  "Miner Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Firmarlite Sheet": 8,
+      "Circuit Board": 4,
+      "Energy Cell": 8
+    },
+    "outputs": {
+      "Miner Robot Torso": 4
+    }
+  },
+  "Miner Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "CPU": 4,
+      "Xenoferrite Plates": 4
+    },
+    "outputs": {
+      "Miner Robot Head": 4
+    }
+  },
+  "Miner Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Steel Beams": 4,
+      "Mining Drill": 4
+    },
+    "outputs": {
+      "Miner Robot Arm": 4
+    }
+  },
+  "Miner Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Steel Beams": 4
+    },
+    "outputs": {
+      "Miner Robot Leg": 4
+    }
+  },
+  "Science Robot Torso": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Polymer Board": 8,
+      "Circuit Board": 4,
+      "Energy Cell": 4
+    },
+    "outputs": {
+      "Science Robot Torso": 4
+    }
+  },
+  "Science Robot Head": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Polymer Board": 4,
+      "CPU": 8,
+      "Glass": 8
+    },
+    "outputs": {
+      "Science Robot Head": 4
+    }
+  },
+  "Science Robot Arm": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Polymer Board": 4
+    },
+    "outputs": {
+      "Science Robot Arm": 4
+    }
+  },
+  "Science Robot Leg": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Robot Parts": 4,
+      "Hydraulic Piston": 4,
+      "Firmarlite Sheet": 4,
+      "Polymer Board": 4
+    },
+    "outputs": {
+      "Science Robot Leg": 4
+    }
+  },
+  "Modular Building Planner": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Polymer Board": 15,
+      "Machinery Parts": 15
+    },
+    "outputs": {
+      "Modular Building Planner": 15
+    }
+  },
+  "Barrel": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Xenoferrite Plates": 20
+    },
+    "outputs": {
+      "Barrel": 20
+    }
+  },
+  "Mining Drill": {
+    "factory_type": "Assembler",
+    "inputs": {
+      "Xenoferrite Plates": 15,
+      "Machinery Parts": 7.5,
+      "Electronic Components": 7.5
+    },
+    "outputs": {
+      "Mining Drill": 7.5
+    }
   }
 }
