@@ -218,7 +218,8 @@ class TestXenoferriteCalculation:
                 "Ore Vein Miner": "Operator Robot"
             },
             "workstation_level": 1,
-            "research_efficiency": {"ore": 0.1, "olumite": 0.0}
+            "research_efficiency": {"ore": 0.1, "olumite": 0.0},
+            "resolve_fracking": False
         }
         
         response = client.post("/api/calculate", json=request)

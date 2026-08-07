@@ -1112,5 +1112,66 @@
     "outputs": {
       "Mining Drill": 7.5
     }
+  },
+  "Fracking Fluid": {
+    "factory_type": "Chemical Processor",
+    "inputs": {
+      "Air": 360,
+      "Olumite Gas": 120,
+      "Water": 720
+    },
+    "outputs": {
+      "Fracking Fluid": 1200
+    }
+  },
+  "Xenoferrite Ore Rubble (Ore Vein Mining, Fracking)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Fracking Fluid": 150
+    },
+    "outputs": {
+      "Xenoferrite Ore Rubble": 160
+    },
+    "fracking": true
+  },
+  "Technum Ore Rubble (Ore Vein Mining, Fracking)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Fracking Fluid": 150
+    },
+    "outputs": {
+      "Technum Ore Rubble": 160
+    },
+    "fracking": true
+  },
+  "Ignium Ore Rubble (Ore Vein Mining, Fracking)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Fracking Fluid": 150
+    },
+    "outputs": {
+      "Ignium Ore Rubble": 160
+    },
+    "fracking": true
+  },
+  "Telluxite Ore Rubble (Ore Vein Mining, Fracking)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Fracking Fluid": 150
+    },
+    "outputs": {
+      "Telluxite Ore Rubble": 160
+    },
+    "fracking": true
+  },
+  "Mineral Rocks (Ore Vein Mining, Fracking)": {
+    "factory_type": "Ore Vein Miner",
+    "inputs": {
+      "Fracking Fluid": 150
+    },
+    "outputs": {
+      "Mineral Rocks": 160
+    },
+    "fracking": true
   }
 }

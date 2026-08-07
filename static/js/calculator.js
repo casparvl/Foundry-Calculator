@@ -48,6 +48,10 @@ async function calculate() {
         const oreResearch = oreResearchEl ? (parseFloat(oreResearchEl.value) || 0) : 0;
         const olumiteResearch = olumiteResearchEl ? (parseFloat(olumiteResearchEl.value) || 0) : 0;
         
+        // Gather fracking resolution toggle
+        const frackingToggleEl = document.querySelector('.fracking-toggle');
+        const resolveFracking = frackingToggleEl ? frackingToggleEl.checked : true;
+        
         // Gather recipe overrides
         const recipeOverrides = {};
         document.querySelectorAll('.override-tier').forEach(select => {
@@ -85,7 +89,8 @@ async function calculate() {
             research_efficiency: {
                 ore: oreResearch,
                 olumite: olumiteResearch
-            }
+            },
+            resolve_fracking: resolveFracking
         };
         
         // Call API

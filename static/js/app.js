@@ -141,6 +141,12 @@ function populateGlobalSettings() {
                     <input type="number" class="form-select olumite-research-input" value="0" step="0.1" min="0">
                 </div>
             </div>
+            <div class="form-check mt-2">
+                <input class="form-check-input fracking-toggle" type="checkbox" id="fracking-toggle" checked>
+                <label class="form-check-label" for="fracking-toggle">
+                    Resolve ore to olumite consumption through fracking
+                </label>
+            </div>
         </div>
     `;
     container.appendChild(researchRow);

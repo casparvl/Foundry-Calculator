@@ -438,3 +438,100 @@ class TestMultiDepthConsumers:
         # ItemE demand must match ItemC production (85)
         item_e = next(n for n in chain if n["item"] == "ItemE")
         assert item_e["requested_rate"] == pytest.approx(85.0)
+
+
+class TestFrackingResolution:
+    """Tests for the 'resolve ore through fracking' toggle."""
+
+    FACTORIES = {
+        "Ore Vein Miner": {
+            "tiers": [
+                {"name": "Tier 1", "speed_multiplier": 1.0, "power_kw": 200}
+            ]
+        },
+        "Chemical Processor": {
+            "tiers": [
+                {"name": "Tier 1", "speed_multiplier": 1.0, "power_kw": 300}
+            ]
+        }
+    }
+
+    RECIPES = {
+        "Ore (Ore Vein Mining)": {
+            "factory_type": "Ore Vein Miner",
+            "inputs": {"Ore (from environment)": 160},
+            "outputs": {"Ore": 160},
+            "resource_type": "ore"
+        },
+        "Ore (Ore Vein Mining, Fracking)": {
+            "factory_type": "Ore Vein Miner",
+            "inputs": {"Fracking Fluid": 150},
+            "outputs": {"Ore": 160},
+            "fracking": True
+        },
+        "Fracking Fluid": {
+            "factory_type": "Chemical Processor",
+            "inputs": {"Air": 360, "Olumite Gas": 120, "Water": 720},
+            "outputs": {"Fracking Fluid": 1200}
+        }
+    }
+
+    ROBOTS = {
+        "workstation_levels": {"1": 1.0, "2": 2.0, "3": 4.0},
+        "machine_aliases": {"Miner": ["Ore Vein Miner"]},
+        "robots": {
+            "Eff Robot": {
+                "robot_type": "Robot",
+                "affected_machines": ["Miner"],
+                "buff_type": "efficiency",
+                "buff_percentage": 0.06,
+                "power_increase_percentage": 0.2
+            }
+        }
+    }
+
+    def _run(self, resolve_fracking, robot=None, ore_research=0.0):
+        from src.models import CalculationRequest
+        solver = ProductionChainSolver(self.FACTORIES, self.RECIPES, self.ROBOTS)
+        request = CalculationRequest(
+            outputs=[{"item": "Ore", "rate": 320}],
+            global_tiers={"Ore Vein Miner": "Tier 1"},
+            global_robots={"Ore Vein Miner": robot},
+            workstation_level=1,
+            research_efficiency={"ore": ore_research, "olumite": 0.0},
+            resolve_fracking=resolve_fracking
+        )
+        return solver.calculate(request)
+
+    def test_fracking_off_uses_environment(self):
+        """With the toggle off, ore is a raw from-environment resource."""
+        result = self._run(resolve_fracking=False)
+        chain = result["production_chain"]
+        ore = next(n for n in chain if n["item"] == "Ore")
+        assert ore["recipe_name"] == "Ore (Ore Vein Mining)"
+        assert "Fracking Fluid" not in [n["item"] for n in chain]
+        raw = result["raw_resources"]
+        assert "Ore (from environment)" in raw
+        assert raw["Ore (from environment)"]["world_consumption"] == pytest.approx(320.0)
+
+    def test_fracking_on_uses_fluid(self):
+        """With the toggle on, ore is produced from fracking fluid which
+        cascades to the fluid recipe."""
+        result = self._run(resolve_fracking=True)
+        chain = result["production_chain"]
+        ore = next(n for n in chain if n["item"] == "Ore")
+        assert ore["recipe_name"] == "Ore (Ore Vein Mining, Fracking)"
+        # 320 ore * 150/160 fluid = 300 fluid, no efficiency
+        assert ore["inputs_required"]["Fracking Fluid"]["rate"] == pytest.approx(300.0)
+        fluid = next(n for n in chain if n["item"] == "Fracking Fluid")
+        assert fluid["factories"]["count"] == pytest.approx(300.0 / 1200.0)
+        assert "Ore (from environment)" not in result["raw_resources"]
+
+    def test_fracking_research_and_robot_reduce_fluid(self):
+        """Fluid consumption is reduced by robot efficiency + ore research."""
+        result = self._run(resolve_fracking=True, robot="Eff Robot", ore_research=0.5)
+        ore = next(n for n in result["production_chain"] if n["item"] == "Ore")
+        base = 320.0 * 150.0 / 160.0
+        # Efficiency = 1 + robot (0.06) + research (0.5)
+        assert ore["inputs_required"]["Fracking Fluid"]["rate"] == pytest.approx(
+            base / (1 + 0.06 + 0.5))

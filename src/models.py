@@ -38,6 +38,7 @@ class CalculationRequest(BaseModel):
     global_robots: Dict[str, Optional[str]] = {}
     workstation_level: int = 3
     research_efficiency: Dict[str, float] = {"ore": 0.0, "olumite": 0.0}
+    resolve_fracking: bool = True
 
 
 # ============================================================================

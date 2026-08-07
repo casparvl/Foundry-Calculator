@@ -23,11 +23,19 @@ class ProductionChainSolver:
         self.recipes = recipes
         self.robots = robots if robots is not None else {}
         self._calculation_cache: Dict[str, Any] = {}
-        # Build reverse lookup: output item → recipe name
+        # Build reverse lookup: output item → recipe name.
+        # Fracking alternative recipes produce the same ore item as their
+        # standard "from environment" counterparts; they are tracked separately
+        # so the fracking toggle can choose between the two producers.
         self._output_to_recipe: Dict[str, str] = {}
+        self._fracking_recipes: Dict[str, str] = {}
         for recipe_name, recipe_data in recipes.items():
+            is_fracking = bool(recipe_data.get("fracking"))
             for output_item in recipe_data.get("outputs", {}):
-                self._output_to_recipe[output_item] = recipe_name
+                if is_fracking:
+                    self._fracking_recipes[output_item] = recipe_name
+                else:
+                    self._output_to_recipe[output_item] = recipe_name
     
     def calculate(self, request: CalculationRequest) -> Dict[str, Any]:
         """
@@ -64,7 +72,7 @@ class ProductionChainSolver:
             propagated[item] = items_needed.get(item, 0.0)
             
             # Check if item has a recipe (direct or via output lookup)
-            recipe_name = item if item in self.recipes else self._output_to_recipe.get(item)
+            recipe_name = self._recipe_for(item, request.resolve_fracking)
             if not recipe_name:
                 # Basic resource or world input: nothing to propagate
                 continue
@@ -79,6 +87,9 @@ class ProductionChainSolver:
                 robot_name, request.workstation_level
             )
             efficiency = 1 + efficiency_modifier
+            if recipe.get("fracking"):
+                # Ore research efficiency also reduces fracking fluid consumption
+                efficiency += request.research_efficiency.get("ore", 0.0)
             primary_output_amount = list(recipe["outputs"].values())[0]
             
             for input_item, input_amount in recipe["inputs"].items():
@@ -102,7 +113,7 @@ class ProductionChainSolver:
             processed_items.add(item)
             
             # Check if item has a recipe (direct or via output lookup)
-            recipe_name = item if item in self.recipes else self._output_to_recipe.get(item)
+            recipe_name = self._recipe_for(item, request.resolve_fracking)
             if not recipe_name:
                 # This is a basic resource without a recipe
                 if item not in raw_resources:
@@ -161,8 +172,11 @@ class ProductionChainSolver:
                     )
                     # Do NOT add to processing queue - consumed from world
                 else:
-                    # Apply efficiency modifier for regular recipes
+                    # Apply efficiency modifier for regular recipes.
+                    # Fracking recipes also benefit from ore research efficiency.
                     efficiency = 1 + efficiency_modifier
+                    if recipe.get("fracking"):
+                        efficiency += request.research_efficiency.get("ore", 0.0)
                     input_rate /= efficiency
                     
                     inputs_required[input_item] = InputOutputInfo(
@@ -233,6 +247,20 @@ class ProductionChainSolver:
         
         return result
     
+    def _recipe_for(self, item: str, resolve_fracking: bool) -> Optional[str]:
+        """Resolve the producing recipe for an item.
+
+        If the item is itself a recipe key (e.g. an extractor recipe that is
+        requested directly), use it. Otherwise, when fracking resolution is
+        enabled, prefer the fracking alternative recipe for ore items; fall back
+        to the standard "from environment" recipe.
+        """
+        if item in self.recipes:
+            return item
+        if resolve_fracking and item in self._fracking_recipes:
+            return self._fracking_recipes[item]
+        return self._output_to_recipe.get(item)
+
     def _get_tier_info(self, factory_type: str, tier_name: str) -> FactoryTier:
         """Get tier information for a factory type."""
         factory = self.factories.get(factory_type)
