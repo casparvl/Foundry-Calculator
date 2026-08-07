@@ -207,7 +207,8 @@ class ProductionChainSolver:
                 ),
                 inputs_required=inputs_required,
                 outputs_produced={output_item: output_rate},
-                power_kw=power_kw
+                power_kw=power_kw,
+                fracking=bool(recipe.get("fracking"))
             )
             production_chain.append(node)
             

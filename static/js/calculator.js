@@ -185,7 +185,17 @@ function displaySummary(results) {
     
     // Total power
     html += '<div class="col-md-4"><strong>Total Power:</strong><br>';
-    html += `${formatNumber(results.total_power_kw)} kW</div>`;
+    html += `${formatNumber(results.total_power_kw)} kW`;
+
+    // Fracking ore vein miners (only present when fracking resolution is on)
+    const minerNodes = results.production_chain.filter(n => n.fracking);
+    if (minerNodes.length > 0) {
+        html += '<br><br><strong>Ore Miners (via fracking):</strong><br>';
+        for (const n of minerNodes) {
+            html += `${n.item}: ${formatNumber(n.factories.count)}×<br>`;
+        }
+    }
+    html += '</div>';
     
     // Factory counts
     const factoryCounts = {};

@@ -509,6 +509,7 @@ class TestFrackingResolution:
         chain = result["production_chain"]
         ore = next(n for n in chain if n["item"] == "Ore")
         assert ore["recipe_name"] == "Ore (Ore Vein Mining)"
+        assert ore["fracking"] is False
         assert "Fracking Fluid" not in [n["item"] for n in chain]
         raw = result["raw_resources"]
         assert "Ore (from environment)" in raw
@@ -521,6 +522,7 @@ class TestFrackingResolution:
         chain = result["production_chain"]
         ore = next(n for n in chain if n["item"] == "Ore")
         assert ore["recipe_name"] == "Ore (Ore Vein Mining, Fracking)"
+        assert ore["fracking"] is True
         # 320 ore * 150/160 fluid = 300 fluid, no efficiency
         assert ore["inputs_required"]["Fracking Fluid"]["rate"] == pytest.approx(300.0)
         fluid = next(n for n in chain if n["item"] == "Fracking Fluid")

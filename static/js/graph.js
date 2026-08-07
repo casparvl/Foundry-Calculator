@@ -34,11 +34,17 @@ function renderGraph() {
         for (const node of results.production_chain) {
             const nodeId = `recipe_${node.recipe_name}`;
             if (!nodeIds.has(nodeId)) {
+                // Fracking ore-vein nodes run on olumite-derived fracking fluid;
+                // color them like raw ore resources so the mined ore stays visible.
+                const group = node.fracking ? 'miner' : 'product';
+                const title = node.fracking
+                    ? `${node.recipe_name} — ${formatNumber(node.factories.count)} factories at ${formatNumber(node.requested_rate)}/min (via fracking)`
+                    : `${node.recipe_name} — ${formatNumber(node.factories.count)} factories at ${formatNumber(node.requested_rate)}/min`;
                 nodes.push({
                     id: nodeId,
                     label: `${node.factories.type} (${node.factories.tier})\n${formatNumber(node.factories.count)}×`,
-                    group: 'product',
-                    title: `${node.recipe_name} — ${formatNumber(node.factories.count)} factories at ${formatNumber(node.requested_rate)}/min`
+                    group: group,
+                    title: title
                 });
                 nodeIds.add(nodeId);
             }
@@ -145,6 +151,7 @@ function renderGraph() {
                 infinite: { color: { background: '#00BCD4', border: '#0097A7' } },
                 basic: { color: { background: '#9E9E9E', border: '#616161' } },
                 product: { color: { background: '#9C27B0', border: '#7B1FA2' } },
+                miner: { color: { background: '#4CAF50', border: '#2E7D32' } },
                 output: { color: { background: '#FF5722', border: '#BF360C' } }
             },
             layout: {

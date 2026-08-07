@@ -67,6 +67,7 @@ class ProductionNode(BaseModel):
     inputs_required: Dict[str, InputOutputInfo]
     outputs_produced: Dict[str, float]
     power_kw: float
+    fracking: bool = False
 
 
 class RawResourceInfo(BaseModel):
